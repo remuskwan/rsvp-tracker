@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -57,32 +58,41 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-stone-50">
       {/* Hero */}
-      <header className="relative bg-stone-100 py-20 px-4 text-center border-b border-stone-200">
-        <p className="text-sm uppercase tracking-widest text-stone-500 mb-3 font-sans">
-          You are cordially invited to the wedding of
-        </p>
-        <h1
-          className="text-5xl md:text-7xl font-heading text-stone-800 mb-6"
-          style={{ fontFamily: "var(--font-playfair)" }}
-        >
-          {wedding?.couple_names ?? "The Happy Couple"}
-        </h1>
-        {wedding?.event_date && (
-          <p className="text-xl text-stone-600 font-sans">
-            {formatDate(wedding.event_date)}
+      <header className="relative bg-stone-100 py-20 px-4 text-center border-b border-stone-200 overflow-hidden">
+        <Image
+          src="/hero.jpg"
+          alt="Wedding couple"
+          fill
+          className="object-cover opacity-30"
+          priority
+        />
+        <div className="relative z-10">
+          <p className="text-sm uppercase tracking-widest text-stone-500 mb-3 font-sans">
+            You are cordially invited to the wedding of
           </p>
-        )}
-        {wedding?.rsvp_deadline && (
-          <p className="mt-2 text-sm text-stone-500">
-            Kindly RSVP by {formatDeadline(wedding.rsvp_deadline)}
-          </p>
-        )}
-        <div className="mt-8">
-          <Link href="/rsvp">
-            <Button size="lg" className="rounded-full px-10 text-base">
-              RSVP Now
-            </Button>
-          </Link>
+          <h1
+            className="text-5xl md:text-7xl font-heading text-stone-800 mb-6"
+            style={{ fontFamily: "var(--font-playfair)" }}
+          >
+            {wedding?.couple_names ?? "The Happy Couple"}
+          </h1>
+          {wedding?.event_date && (
+            <p className="text-xl text-stone-600 font-sans">
+              {formatDate(wedding.event_date)}
+            </p>
+          )}
+          {wedding?.rsvp_deadline && (
+            <p className="mt-2 text-sm text-stone-500">
+              Kindly RSVP by {formatDeadline(wedding.rsvp_deadline)}
+            </p>
+          )}
+          <div className="mt-8">
+            <Link href="/rsvp">
+              <Button size="lg" className="rounded-full px-10 text-base">
+                RSVP Now
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 

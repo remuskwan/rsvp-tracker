@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { RsvpForm } from "@/components/rsvp-form";
 import { ArrowLeft } from "lucide-react";
@@ -34,6 +35,15 @@ export default async function RsvpPage() {
         </Link>
 
         <div className="text-center mb-10">
+          <div className="relative w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-stone-200 shadow-sm">
+            <Image
+              src="/rsvp.jpg"
+              alt="Wedding couple"
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
           <h1
             className="text-4xl text-stone-800 mb-2"
             style={{ fontFamily: "var(--font-playfair)" }}
