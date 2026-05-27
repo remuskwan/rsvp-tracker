@@ -63,11 +63,12 @@ create policy "Public can read wedding_info"
   using (true);
 
 -- wedding_info: only authenticated users with matching admin email can update
+-- Replace 'remuskwan23@gmail.com' with your admin email if different
 create policy "Admin can update wedding_info"
   on wedding_info for update
   to authenticated
-  using (auth.jwt() ->> 'email' = current_setting('app.admin_email', true))
-  with check (auth.jwt() ->> 'email' = current_setting('app.admin_email', true));
+  using (auth.jwt() ->> 'email' = 'remuskwan23@gmail.com')
+  with check (auth.jwt() ->> 'email' = 'remuskwan23@gmail.com');
 
 -- rsvps: anyone can insert (guests submitting RSVPs)
 create policy "Public can insert rsvps"
@@ -79,16 +80,16 @@ create policy "Public can insert rsvps"
 create policy "Admin can read rsvps"
   on rsvps for select
   to authenticated
-  using (auth.jwt() ->> 'email' = current_setting('app.admin_email', true));
+  using (auth.jwt() ->> 'email' = 'remuskwan23@gmail.com');
 
 -- rsvps: only admin can update
 create policy "Admin can update rsvps"
   on rsvps for update
   to authenticated
-  using (auth.jwt() ->> 'email' = current_setting('app.admin_email', true));
+  using (auth.jwt() ->> 'email' = 'remuskwan23@gmail.com');
 
 -- rsvps: only admin can delete
 create policy "Admin can delete rsvps"
   on rsvps for delete
   to authenticated
-  using (auth.jwt() ->> 'email' = current_setting('app.admin_email', true));
+  using (auth.jwt() ->> 'email' = 'remuskwan23@gmail.com');
