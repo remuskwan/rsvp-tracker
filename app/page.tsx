@@ -63,6 +63,7 @@ export default async function Home() {
           src="/hero.jpg"
           alt="Wedding couple"
           fill
+          sizes="100vw"
           className="object-cover opacity-30"
           priority
         />
