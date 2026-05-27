@@ -32,6 +32,51 @@ export async function updateWeddingInfo(rawData: unknown) {
   return { success: true };
 }
 
+export async function addAdmin(email: string) {
+  await requireAdmin();
+
+  const normalised = email.trim().toLowerCase();
+  if (!normalised || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalised)) {
+    return { success: false, error: "Invalid email address." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("admins")
+    .insert({ email: normalised });
+
+  if (error) {
+    if (error.code === "23505") {
+      return { success: false, error: "That email is already an admin." };
+    }
+    return { success: false, error: "Failed to add admin." };
+  }
+
+  revalidatePath("/admin/admins");
+  return { success: true };
+}
+
+export async function removeAdmin(email: string) {
+  const currentUser = await requireAdmin();
+
+  if (currentUser.email === email) {
+    return { success: false, error: "You cannot remove yourself." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("admins")
+    .delete()
+    .eq("email", email);
+
+  if (error) {
+    return { success: false, error: "Failed to remove admin." };
+  }
+
+  revalidatePath("/admin/admins");
+  return { success: true };
+}
+
 export async function updateRsvpStatus(
   id: string,
   followup_status: string,
