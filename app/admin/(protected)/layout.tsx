@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireAdmin } from "@/lib/supabase/admin-guard";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { LayoutDashboard, Edit, QrCode, LogOut } from "lucide-react";
+import { LayoutDashboard, Edit, QrCode, LogOut, Users } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -25,6 +25,12 @@ async function AdminNav() {
         <Button variant="ghost" className="w-full justify-start gap-2">
           <QrCode className="h-4 w-4" />
           QR Code
+        </Button>
+      </Link>
+      <Link href="/admin/admins">
+        <Button variant="ghost" className="w-full justify-start gap-2">
+          <Users className="h-4 w-4" />
+          Admins
         </Button>
       </Link>
       <Separator className="my-2" />
