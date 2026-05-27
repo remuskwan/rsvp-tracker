@@ -40,6 +40,7 @@ export default async function RsvpPage() {
               src="/rsvp.jpg"
               alt="Wedding couple"
               fill
+              sizes="128px"
               className="object-cover"
               priority
             />
