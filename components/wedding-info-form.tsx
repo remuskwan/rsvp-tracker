@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { updateWeddingInfo } from "@/app/actions/admin";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { PinLocationSearch } from "@/components/pin-location-search";
+import { PinImageUpload } from "@/components/pin-image-upload";
 import {
   Select,
   SelectContent,
@@ -35,6 +36,7 @@ interface MapPinEntry {
   lat: string;
   lng: string;
   description: string;
+  photo_url: string;
 }
 
 const PIN_TYPE_OPTIONS: { value: PinType; label: string }[] = [
@@ -66,8 +68,9 @@ interface WeddingInfoData {
   parking_info: string | null;
   accommodations: string | null;
   maps_url: string | null;
-  map_pins: { label: string; type: PinType; lat: number; lng: number; description?: string | null }[];
+  map_pins: { label: string; type: PinType; lat: number; lng: number; description?: string | null; photo_url?: string | null }[];
   how_to_get_there: string | null;
+  venue_photo_url: string | null;
   sections: Section[];
   faqs: FaqEntry[];
   rsvp_deadline: string | null;
@@ -88,6 +91,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
   const [accommodations, setAccommodations] = useState(initial.accommodations ?? "");
   const [mapsUrl, setMapsUrl] = useState(initial.maps_url ?? "");
   const [howToGetThere, setHowToGetThere] = useState(initial.how_to_get_there ?? "");
+  const [venuePhotoUrl, setVenuePhotoUrl] = useState<string | null>(initial.venue_photo_url ?? null);
   const [mapPins, setMapPins] = useState<MapPinEntry[]>(
     (initial.map_pins ?? []).map((p) => ({
       label: p.label,
@@ -95,6 +99,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
       lat: String(p.lat),
       lng: String(p.lng),
       description: p.description ?? "",
+      photo_url: p.photo_url ?? "",
     }))
   );
   const [rsvpDeadline, setRsvpDeadline] = useState(initial.rsvp_deadline ?? "");
@@ -105,7 +110,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
     setMapPins((prev) => prev.map((p, i) => (i === index ? { ...p, [field]: value } : p)));
 
   const addPin = () =>
-    setMapPins((prev) => [...prev, { label: "", type: "other", lat: "", lng: "", description: "" }]);
+    setMapPins((prev) => [...prev, { label: "", type: "other", lat: "", lng: "", description: "", photo_url: "" }]);
 
   const removePin = (index: number) =>
     setMapPins((prev) => prev.filter((_, i) => i !== index));
@@ -148,6 +153,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
         accommodations: accommodations || null,
         maps_url: mapsUrl || null,
         how_to_get_there: howToGetThere || null,
+        venue_photo_url: venuePhotoUrl || null,
         map_pins: mapPins
           .filter((p) => p.label && p.lat && p.lng)
           .map((p) => ({
@@ -156,6 +162,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
             lat: parseFloat(p.lat),
             lng: parseFloat(p.lng),
             description: p.description || null,
+            photo_url: p.photo_url || null,
           })),
         rsvp_deadline: rsvpDeadline || null,
         sections,
@@ -230,6 +237,11 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
             placeholder="123 Orchard Road, Singapore 238888"
             rows={2}
           />
+        </div>
+        <div className="space-y-1">
+          <Label>Venue Photo</Label>
+          <PinImageUpload url={venuePhotoUrl} onChange={setVenuePhotoUrl} />
+          <p className="text-xs text-stone-400">Shown in the map card when guests tap the venue pin.</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1">
@@ -399,6 +411,13 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
                   value={pin.description}
                   onChange={(e) => updatePin(i, "description", e.target.value)}
                   placeholder="e.g. Use the side entrance on Orchard Road"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label>Photo <span className="text-stone-400 font-normal">(optional)</span></Label>
+                <PinImageUpload
+                  url={pin.photo_url || null}
+                  onChange={(url) => updatePin(i, "photo_url", url ?? "")}
                 />
               </div>
             </div>

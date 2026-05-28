@@ -5,41 +5,6 @@ import { requireAdmin } from "@/lib/supabase/admin-guard";
 import { weddingInfoSchema } from "@/lib/validation";
 import { revalidatePath } from "next/cache";
 
-async function fetchPlacePhoto(label: string, lat: number, lng: number): Promise<string | null> {
-  const key = process.env.GOOGLE_PLACES_API_KEY;
-  if (!key) return null;
-  try {
-    const searchRes = await fetch("https://places.googleapis.com/v1/places:searchText", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Goog-Api-Key": key,
-        "X-Goog-FieldMask": "places.photos",
-      },
-      body: JSON.stringify({
-        textQuery: label,
-        maxResultCount: 1,
-        locationBias: {
-          circle: { center: { latitude: lat, longitude: lng }, radius: 500 },
-        },
-      }),
-    });
-    if (!searchRes.ok) return null;
-    const searchData = await searchRes.json();
-    const photoName = searchData?.places?.[0]?.photos?.[0]?.name;
-    if (!photoName) return null;
-
-    const photoRes = await fetch(
-      `https://places.googleapis.com/v1/${photoName}/media?maxWidthPx=800&skipHttpRedirect=true&key=${key}`
-    );
-    if (!photoRes.ok) return null;
-    const photoData = await photoRes.json();
-    return photoData?.photoUri ?? null;
-  } catch {
-    return null;
-  }
-}
-
 async function geocodeAddress(address: string): Promise<{ lat: number; lng: number } | null> {
   const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
   if (!token) return null;
@@ -67,38 +32,17 @@ export async function updateWeddingInfo(rawData: unknown) {
     };
   }
 
-  const payload: typeof parsed.data & {
-    venue_lat?: number | null;
-    venue_lng?: number | null;
-    venue_photo_url?: string | null;
-    map_pins?: (typeof parsed.data.map_pins[number] & { photo_url?: string | null })[];
-  } = { ...parsed.data };
+  const payload: typeof parsed.data & { venue_lat?: number | null; venue_lng?: number | null } = { ...parsed.data };
 
   if (parsed.data.venue_address) {
     const coords = await geocodeAddress(parsed.data.venue_address);
     if (coords) {
       payload.venue_lat = coords.lat;
       payload.venue_lng = coords.lng;
-      const photo = await fetchPlacePhoto(
-        parsed.data.venue_name ?? parsed.data.venue_address,
-        coords.lat,
-        coords.lng
-      );
-      if (photo) payload.venue_photo_url = photo;
     }
   } else {
     payload.venue_lat = null;
     payload.venue_lng = null;
-    payload.venue_photo_url = null;
-  }
-
-  if (parsed.data.map_pins.length > 0) {
-    payload.map_pins = await Promise.all(
-      parsed.data.map_pins.map(async (pin) => {
-        const photo = await fetchPlacePhoto(pin.label, pin.lat, pin.lng);
-        return { ...pin, photo_url: photo };
-      })
-    );
   }
 
   const supabase = await createClient();

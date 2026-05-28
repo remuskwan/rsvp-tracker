@@ -38,6 +38,7 @@ export default async function WeddingInfoPage() {
           maps_url: info?.maps_url ?? null,
           map_pins: info?.map_pins ?? [],
           how_to_get_there: info?.how_to_get_there ?? null,
+          venue_photo_url: info?.venue_photo_url ?? null,
           sections: info?.sections ?? [],
           faqs: info?.faqs ?? [],
           rsvp_deadline: info?.rsvp_deadline ?? null,
