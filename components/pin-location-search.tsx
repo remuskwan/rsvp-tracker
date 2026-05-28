@@ -36,11 +36,7 @@ export function PinLocationSearch({ lat, lng, onSelect }: PinLocationSearchProps
   }, []);
 
   useEffect(() => {
-    if (query.length < 2) {
-      setPredictions([]);
-      setOpen(false);
-      return;
-    }
+    if (query.length < 2) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
       setLoading(true);
@@ -104,7 +100,14 @@ export function PinLocationSearch({ lat, lng, onSelect }: PinLocationSearchProps
       <div className="relative">
         <Input
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => {
+            const val = e.target.value;
+            setQuery(val);
+            if (val.length < 2) {
+              setPredictions([]);
+              setOpen(false);
+            }
+          }}
           onFocus={() => predictions.length > 0 && setOpen(true)}
           placeholder="Search for a place or address…"
           autoComplete="off"
