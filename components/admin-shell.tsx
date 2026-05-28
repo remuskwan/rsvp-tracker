@@ -5,9 +5,11 @@ import { Menu, X } from "lucide-react";
 
 export function AdminShell({
   nav,
+  footer,
   children,
 }: {
   nav: React.ReactNode;
+  footer?: React.ReactNode;
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -22,6 +24,7 @@ export function AdminShell({
           </h2>
         </div>
         {nav}
+        {footer && <div className="mt-auto">{footer}</div>}
       </aside>
 
       {/* Mobile overlay backdrop */}
@@ -51,6 +54,7 @@ export function AdminShell({
           </button>
         </div>
         {nav}
+        {footer && <div className="mt-auto">{footer}</div>}
       </aside>
 
       {/* Main content column */}
