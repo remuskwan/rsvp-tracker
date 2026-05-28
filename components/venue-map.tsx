@@ -103,7 +103,7 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
 
   return (
     <div className="rounded-xl overflow-hidden border border-warm-200 shadow-sm">
-      <div className="relative" style={{ height: 300 }}>
+      <div className="relative" style={{ height: 420 }}>
         <Map
           mapboxAccessToken={token}
           initialViewState={initialViewState}
@@ -123,7 +123,7 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
 
         {/* Slide-in side panel */}
         <div
-          className={`absolute inset-y-0 right-0 w-full sm:w-80 bg-white border-l border-warm-100 shadow-lg transform transition-transform duration-300 ease-out flex flex-col ${open ? "translate-x-0" : "translate-x-full pointer-events-none"}`}
+          className={`absolute inset-y-0 left-0 w-full sm:w-80 bg-white border-r border-warm-100 shadow-lg transform transition-transform duration-300 ease-out flex flex-col ${open ? "translate-x-0" : "-translate-x-full pointer-events-none"}`}
           aria-hidden={!open}
         >
           {selected && (
