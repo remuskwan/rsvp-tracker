@@ -26,11 +26,7 @@ export function PinLocationSearch({ lat, lng, onSelect }: PinLocationSearchProps
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (query.length < 3) {
-      setResults([]);
-      setOpen(false);
-      return;
-    }
+    if (query.length < 3) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
       setLoading(true);
@@ -48,6 +44,9 @@ export function PinLocationSearch({ lat, lng, onSelect }: PinLocationSearchProps
         setLoading(false);
       }
     }, 500);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
   }, [query]);
 
   // close dropdown on outside click
@@ -79,8 +78,12 @@ export function PinLocationSearch({ lat, lng, onSelect }: PinLocationSearchProps
         <Input
           value={query}
           onChange={(e) => {
-            setQuery(e.target.value);
-            // clear coords if the user starts editing after a selection
+            const val = e.target.value;
+            setQuery(val);
+            if (val.length < 3) {
+              setResults([]);
+              setOpen(false);
+            }
           }}
           onFocus={() => results.length > 0 && setOpen(true)}
           placeholder="Search for a place or address…"
