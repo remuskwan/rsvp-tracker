@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Map, { Marker, NavigationControl } from "react-map-gl/mapbox";
-import { MapPin, Navigation, X } from "lucide-react";
+import { ExternalLink, Navigation, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { MapPin as MapPinData, PinType } from "@/components/map-embed";
 
@@ -57,7 +57,13 @@ function PinMarker({ color, number, onClick }: { color: string; number: number; 
 
 export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, mapPins = [] }: VenueMapProps) {
   const [selected, setSelected] = useState<SelectedPin | null>(null);
+  const [open, setOpen] = useState(false);
   const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? "";
+
+  const handleSelect = (pin: SelectedPin) => {
+    setSelected(pin);
+    setOpen(true);
+  };
 
   const allPins: SelectedPin[] = useMemo(() => [
     { label: venueName, address: venueAddress, photo_url: venuePhotoUrl, lat, lng, type: "venue" as PinType, number: 1 },
@@ -80,11 +86,13 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
   const directionsUrl = selected
     ? `https://www.google.com/maps/dir/?api=1&destination=${selected.lat},${selected.lng}`
     : "";
+  const viewOnMapsUrl = selected
+    ? `https://www.google.com/maps/search/?api=1&query=${selected.lat},${selected.lng}`
+    : "";
 
   return (
     <div className="rounded-xl overflow-hidden border border-warm-200 shadow-sm">
-      {/* Map */}
-      <div style={{ height: 300 }}>
+      <div className="relative" style={{ height: 300 }}>
         <Map
           mapboxAccessToken={token}
           initialViewState={initialViewState}
@@ -94,70 +102,75 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
           <NavigationControl position="top-right" showCompass={false} />
           {allPins.map((pin, i) => (
             <Marker key={i} longitude={pin.lng} latitude={pin.lat} anchor="bottom"
-              onClick={() => setSelected(pin)}>
-              <PinMarker color={PIN_COLORS[pin.type]} number={i + 1} onClick={() => setSelected(pin)} />
+              onClick={() => handleSelect(pin)}>
+              <PinMarker color={PIN_COLORS[pin.type]} number={i + 1} onClick={() => handleSelect(pin)} />
             </Marker>
           ))}
         </Map>
-      </div>
 
-      {/* Selected pin card */}
-      {selected ? (
-        <div className="bg-white border-t border-warm-100">
-          {selected.photo_url && (
-            <div className="relative" style={{ height: 160 }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={selected.photo_url} alt={selected.label} className="w-full h-full object-cover" />
-              <button
-                onClick={() => setSelected(null)}
-                className="absolute top-2 right-2 bg-black/40 hover:bg-black/60 text-white rounded-full p-1 transition-colors"
-                aria-label="Close"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          )}
-          <div className="px-4 py-3 space-y-1">
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <div className="flex items-center gap-1.5 mb-1">
-                  <span
-                    className="inline-flex items-center justify-center w-5 h-5 rounded-full text-white text-xs font-bold shrink-0"
-                    style={{ background: PIN_COLORS[selected.type] }}
-                  >
-                    {selected.number}
-                  </span>
-                  <span
-                    className="inline-block text-xs font-medium px-2 py-0.5 rounded-full"
-                    style={{ background: PIN_COLORS[selected.type] + "22", color: PIN_COLORS[selected.type] }}
-                  >
-                    {PIN_LABELS[selected.type]}
-                  </span>
+        {/* Slide-in side panel */}
+        <div
+          className={`absolute inset-y-0 right-0 w-full sm:w-80 bg-white border-l border-warm-100 shadow-lg transform transition-transform duration-300 ease-out flex flex-col ${open ? "translate-x-0" : "translate-x-full pointer-events-none"}`}
+          aria-hidden={!open}
+        >
+          {selected && (
+            <>
+              {selected.photo_url && (
+                <div className="relative aspect-video bg-warm-50 shrink-0">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={selected.photo_url} alt={selected.label} className="w-full h-full object-cover" />
                 </div>
-                <p className="font-semibold text-warm-900 text-sm leading-snug">{selected.label}</p>
-                {selected.address && (
-                  <p className="text-xs text-warm-500 mt-0.5">{selected.address}</p>
-                )}
-              </div>
-              {!selected.photo_url && (
-                <button onClick={() => setSelected(null)} className="text-warm-300 hover:text-warm-500 shrink-0 mt-1">
-                  <X className="h-4 w-4" />
-                </button>
               )}
-            </div>
-            <a href={directionsUrl} target="_blank" rel="noopener noreferrer">
-              <Button size="sm" className="w-full gap-2 mt-2">
-                <Navigation className="h-4 w-4" />
-                Get Directions
-              </Button>
-            </a>
-          </div>
+              <div className="px-4 py-3 space-y-1 overflow-y-auto">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <span
+                        className="inline-flex items-center justify-center w-5 h-5 rounded-full text-white text-xs font-bold shrink-0"
+                        style={{ background: PIN_COLORS[selected.type] }}
+                      >
+                        {selected.number}
+                      </span>
+                      <span
+                        className="inline-block text-xs font-medium px-2 py-0.5 rounded-full"
+                        style={{ background: PIN_COLORS[selected.type] + "22", color: PIN_COLORS[selected.type] }}
+                      >
+                        {PIN_LABELS[selected.type]}
+                      </span>
+                    </div>
+                    <p className="font-semibold text-warm-900 text-sm leading-snug">{selected.label}</p>
+                    {selected.address && (
+                      <p className="text-xs text-warm-500 mt-0.5 break-words">{selected.address}</p>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => setOpen(false)}
+                    className="text-warm-400 hover:text-warm-700 shrink-0 -mt-0.5 -mr-1 p-1"
+                    aria-label="Close"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+                <a href={directionsUrl} target="_blank" rel="noopener noreferrer" className="block">
+                  <Button size="sm" className="w-full gap-2 mt-2">
+                    <Navigation className="h-4 w-4" />
+                    Get Directions
+                  </Button>
+                </a>
+                <a
+                  href={viewOnMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-warm-500 hover:text-warm-700 mt-2"
+                >
+                  <ExternalLink className="h-3 w-3" />
+                  Open in Google Maps
+                </a>
+              </div>
+            </>
+          )}
         </div>
-      ) : (
-        <div className="px-4 py-2.5 bg-white border-t border-warm-100">
-          <p className="text-xs text-warm-400 text-center">Tap a pin for details</p>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
