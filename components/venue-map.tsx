@@ -77,6 +77,17 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
     };
   }, [allPins, lat, lng]);
 
+  // Keep the viewport within ~10km of the venue so users can't pan away to the world.
+  const maxBounds = useMemo<[[number, number], [number, number]]>(() => {
+    const radiusKm = 10;
+    const latDelta = radiusKm / 111.32;
+    const lngDelta = radiusKm / (111.32 * Math.cos((lat * Math.PI) / 180));
+    return [
+      [lng - lngDelta, lat - latDelta],
+      [lng + lngDelta, lat + latDelta],
+    ];
+  }, [lat, lng]);
+
   const directionsUrl = selected
     ? `https://www.google.com/maps/dir/?api=1&destination=${selected.lat},${selected.lng}`
     : "";
@@ -88,6 +99,8 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
         <Map
           mapboxAccessToken={token}
           initialViewState={initialViewState}
+          maxBounds={maxBounds}
+          minZoom={11}
           style={{ width: "100%", height: "100%" }}
           mapStyle="mapbox://styles/mapbox/light-v11"
         >
