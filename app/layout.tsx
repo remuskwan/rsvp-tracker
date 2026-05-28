@@ -20,7 +20,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Wedding RSVP",
+  title: "Remus & Xiaowen's Wedding",
   description: "Please RSVP for our wedding",
 };
 
