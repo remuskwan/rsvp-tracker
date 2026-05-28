@@ -209,6 +209,12 @@ export default async function Home() {
               ? `Please let us know by ${formatDeadline(wedding.rsvp_deadline)}`
               : "Please let us know if you can make it"}
           </p>
+          <p className="text-xs text-warm-400 mb-4">
+            Already RSVPed?{" "}
+            <a href="/rsvp/edit" className="underline underline-offset-2 hover:text-warm-700">
+              Edit your response →
+            </a>
+          </p>
           <div className="bg-white rounded-2xl shadow-sm border border-warm-200 p-6 md:p-8">
             <RsvpForm />
           </div>

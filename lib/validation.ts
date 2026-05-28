@@ -8,7 +8,7 @@ export const guestSchema = z.object({
 
 export const rsvpSchema = z.object({
   submitter_name: z.string().min(1, 'Your name is required'),
-  email: z.string().email('A valid email is required'),
+  email: z.string().email('A valid email is required').transform((s) => s.toLowerCase().trim()),
   phone: z.string().optional().default(''),
   guests: z.array(guestSchema).min(1, 'At least one guest is required'),
   side: z.enum(['bride', 'groom', 'both']).optional(),
