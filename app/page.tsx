@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Calendar, MapPin, Clock, Shirt, ParkingCircle, Hotel } from "lucide-react";
+import { CountdownTimer } from "@/components/countdown-timer";
 
 interface Section {
   title: string;
@@ -81,6 +82,9 @@ export default async function Home() {
             <p className="text-xl text-stone-600 font-sans">
               {formatDate(wedding.event_date)}
             </p>
+          )}
+          {wedding?.event_date && (
+            <CountdownTimer targetDate={wedding.event_date} />
           )}
           {wedding?.rsvp_deadline && (
             <p className="mt-2 text-sm text-stone-500">
