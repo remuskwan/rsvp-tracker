@@ -251,29 +251,6 @@ export default async function Home() {
           );
         })()}
 
-        {/* Thank you */}
-        <section className="py-8 text-center">
-          <div className="relative w-40 h-40 mx-auto mb-6 rounded-full overflow-hidden border-4 border-warm-200 shadow-md">
-            <Image
-              src="/rsvp.jpeg"
-              alt="Wedding couple"
-              fill
-              sizes="160px"
-              className="object-cover"
-            />
-          </div>
-          <h2
-            className="text-2xl text-warm-800 mb-3"
-            style={{ fontFamily: "var(--font-playfair)" }}
-          >
-            We&apos;re so glad you&apos;re here
-          </h2>
-          <p className="text-warm-600 max-w-sm mx-auto leading-relaxed">
-            Thank you for being part of our special day. We truly can&apos;t
-            wait to celebrate with you — see you there!
-          </p>
-        </section>
-
         {/* RSVP Form */}
         <section id="rsvp" className="py-8">
           <h2
@@ -297,6 +274,29 @@ export default async function Home() {
           <div className="bg-white rounded-2xl shadow-sm border border-warm-200 p-6 md:p-8">
             <RsvpForm />
           </div>
+        </section>
+
+        {/* Thank you */}
+        <section className="py-8 text-center">
+          <div className="relative w-40 h-40 mx-auto mb-6 rounded-full overflow-hidden border-4 border-warm-200 shadow-md">
+            <Image
+              src="/rsvp.jpeg"
+              alt="Wedding couple"
+              fill
+              sizes="160px"
+              className="object-cover"
+            />
+          </div>
+          <h2
+            className="text-2xl text-warm-800 mb-3"
+            style={{ fontFamily: "var(--font-playfair)" }}
+          >
+            We&apos;re so glad you&apos;re here
+          </h2>
+          <p className="text-warm-600 max-w-sm mx-auto leading-relaxed">
+            Thank you for being part of our special day. We truly can&apos;t
+            wait to celebrate with you — see you there!
+          </p>
         </section>
       </main>
     </div>
