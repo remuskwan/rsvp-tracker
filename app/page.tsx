@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { RsvpForm } from "@/components/rsvp-form";
-import { Calendar, MapPin, Clock, Shirt, ParkingCircle, Hotel } from "lucide-react";
+import { Calendar, MapPin, Shirt, ParkingCircle, Hotel, Gem, Utensils } from "lucide-react";
 import { CountdownTimer } from "@/components/countdown-timer";
 import { FaqCarousel } from "@/components/faq-carousel";
 import { MapEmbed, type MapPin as MapPinData } from "@/components/map-embed";
@@ -136,22 +136,26 @@ export default async function Home() {
                   <p>{formatDate(wedding.event_date)}</p>
                 </div>
               )}
-              {wedding?.ceremony_time && (
-                <div className="flex items-center gap-3">
-                  <Clock className="h-5 w-5 text-warm-400 shrink-0" />
-                  <p>
-                    <span className="font-medium">Ceremony:</span>{" "}
-                    {wedding.ceremony_time}
-                  </p>
-                </div>
-              )}
-              {wedding?.reception_time && (
-                <div className="flex items-center gap-3">
-                  <Clock className="h-5 w-5 text-warm-400 shrink-0" />
-                  <p>
-                    <span className="font-medium">Reception:</span>{" "}
-                    {wedding.reception_time}
-                  </p>
+              {(wedding?.ceremony_time || wedding?.reception_time) && (
+                <div className="flex gap-4 pt-1">
+                  {wedding?.ceremony_time && (
+                    <div className="flex-1 flex flex-col items-center gap-2 rounded-xl border border-warm-200 bg-warm-100/50 py-5 px-3 text-center">
+                      <Gem className="h-7 w-7 text-warm-400" />
+                      <div>
+                        <p className="text-xs uppercase tracking-widest text-warm-400 mb-0.5">Ceremony</p>
+                        <p className="text-sm font-medium text-warm-800">{wedding.ceremony_time}</p>
+                      </div>
+                    </div>
+                  )}
+                  {wedding?.reception_time && (
+                    <div className="flex-1 flex flex-col items-center gap-2 rounded-xl border border-warm-200 bg-warm-100/50 py-5 px-3 text-center">
+                      <Utensils className="h-7 w-7 text-warm-400" />
+                      <div>
+                        <p className="text-xs uppercase tracking-widest text-warm-400 mb-0.5">Reception</p>
+                        <p className="text-sm font-medium text-warm-800">{wedding.reception_time}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
               {wedding?.dress_code && (
