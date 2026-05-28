@@ -134,7 +134,7 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
           {selected && (
             <>
               {selected.photo_url && (
-                <div className="relative aspect-video bg-warm-50 shrink-0">
+                <div className="relative aspect-video max-h-44 bg-warm-50 shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={selected.photo_url} alt={selected.label} className="w-full h-full object-cover" />
                 </div>
