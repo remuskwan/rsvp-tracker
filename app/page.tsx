@@ -1,8 +1,8 @@
-import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { RsvpForm } from "@/components/rsvp-form";
 import { Calendar, MapPin, Clock, Shirt, ParkingCircle, Hotel } from "lucide-react";
 import { CountdownTimer } from "@/components/countdown-timer";
 
@@ -92,11 +92,9 @@ export default async function Home() {
             </p>
           )}
           <div className="mt-8">
-            <Link href="/rsvp">
-              <Button size="lg" className="rounded-full px-10 text-base">
-                RSVP Now
-              </Button>
-            </Link>
+            <Button size="lg" className="rounded-full px-10 text-base" asChild>
+              <a href="#rsvp">Count me in!</a>
+            </Button>
           </div>
         </div>
       </header>
@@ -195,18 +193,23 @@ export default async function Home() {
             </section>
           ))}
 
-        {/* RSVP CTA */}
-        <section className="text-center py-8">
-          <p className="text-warm-500 mb-4">
+        {/* RSVP Form */}
+        <section id="rsvp" className="py-8">
+          <h2
+            className="text-2xl text-warm-700 mb-2"
+            style={{ fontFamily: "var(--font-playfair)" }}
+          >
+            RSVP
+          </h2>
+          <Separator className="mb-6" />
+          <p className="text-warm-500 mb-6">
             {wedding?.rsvp_deadline
               ? `Please let us know by ${formatDeadline(wedding.rsvp_deadline)}`
               : "Please let us know if you can make it"}
           </p>
-          <Link href="/rsvp">
-            <Button size="lg" className="rounded-full px-10 text-base">
-              RSVP Now
-            </Button>
-          </Link>
+          <div className="bg-white rounded-2xl shadow-sm border border-warm-200 p-6 md:p-8">
+            <RsvpForm />
+          </div>
         </section>
       </main>
     </div>
