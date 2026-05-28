@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { updateWeddingInfo } from "@/app/actions/admin";
 import { PlusCircle, Trash2 } from "lucide-react";
+import { PinLocationSearch } from "@/components/pin-location-search";
 import {
   Select,
   SelectContent,
@@ -300,7 +301,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
         <Separator />
         <p className="text-sm text-stone-500">
           Add pins to the interactive map — venue entrance, pickup/drop-off points, MRT stations, etc.
-          To get coordinates: open Google Maps, right-click a location, and copy the lat/lng numbers shown.
+          Search by name or address to place each pin.
         </p>
         <div className="space-y-4">
           {mapPins.map((pin, i) => (
@@ -354,23 +355,21 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
                   </Select>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <Label>Latitude</Label>
-                  <Input
-                    value={pin.lat}
-                    onChange={(e) => updatePin(i, "lat", e.target.value)}
-                    placeholder="e.g. 1.3521"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label>Longitude</Label>
-                  <Input
-                    value={pin.lng}
-                    onChange={(e) => updatePin(i, "lng", e.target.value)}
-                    placeholder="e.g. 103.8198"
-                  />
-                </div>
+              <div className="space-y-1">
+                <Label>Location</Label>
+                <PinLocationSearch
+                  lat={pin.lat}
+                  lng={pin.lng}
+                  onSelect={(lat, lng, suggestedLabel) => {
+                    setMapPins((prev) =>
+                      prev.map((p, idx) =>
+                        idx === i
+                          ? { ...p, lat, lng, label: p.label || suggestedLabel }
+                          : p
+                      )
+                    );
+                  }}
+                />
               </div>
               <div className="space-y-1">
                 <Label>Description <span className="text-stone-400 font-normal">(optional)</span></Label>
