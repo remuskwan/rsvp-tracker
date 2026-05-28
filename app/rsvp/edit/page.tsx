@@ -1,27 +1,20 @@
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
-import { RsvpForm } from "@/components/rsvp-form";
+import { RsvpEditClient } from "@/components/rsvp-edit-client";
 import { ArrowLeft } from "lucide-react";
 
 export const revalidate = 60;
 
-export default async function RsvpPage() {
+export default async function RsvpEditPage() {
   const supabase = await createClient();
   const { data: info } = await supabase
     .from("wedding_info")
-    .select("couple_names, rsvp_deadline")
+    .select("couple_names")
     .eq("id", 1)
     .single();
 
   const coupleNames = info?.couple_names ?? "The Happy Couple";
-  const deadline = info?.rsvp_deadline
-    ? new Date(info.rsvp_deadline).toLocaleDateString("en-SG", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : null;
 
   return (
     <div className="min-h-screen bg-warm-50">
@@ -49,27 +42,16 @@ export default async function RsvpPage() {
             className="text-4xl text-warm-800 mb-2"
             style={{ fontFamily: "var(--font-playfair)" }}
           >
-            RSVP
+            Edit Your RSVP
           </h1>
           <p className="text-warm-500 text-sm">
             for the wedding of{" "}
             <span className="font-medium text-warm-700">{coupleNames}</span>
           </p>
-          {deadline && (
-            <p className="text-warm-400 text-xs mt-1">
-              Kindly respond by {deadline}
-            </p>
-          )}
         </div>
 
-        <p className="text-xs text-warm-400 mb-4 text-center">
-          Already RSVPed?{" "}
-          <Link href="/rsvp/edit" className="underline underline-offset-2 hover:text-warm-700">
-            Edit your response →
-          </Link>
-        </p>
         <div className="bg-white rounded-2xl shadow-sm border border-warm-200 p-6 md:p-8">
-          <RsvpForm />
+          <RsvpEditClient />
         </div>
       </div>
     </div>

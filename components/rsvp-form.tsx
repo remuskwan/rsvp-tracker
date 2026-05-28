@@ -24,20 +24,28 @@ interface GuestEntry {
   dietary: string;
 }
 
+interface InitialRsvpData {
+  email: string;
+  phone: string | null;
+  side: string | null;
+  message: string | null;
+  guests: GuestEntry[];
+}
+
 const defaultGuest = (): GuestEntry => ({
   name: "",
   attending: true,
   dietary: "",
 });
 
-export function RsvpForm() {
+export function RsvpForm({ initial }: { initial?: InitialRsvpData }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [side, setSide] = useState<string>("");
-  const [message, setMessage] = useState("");
-  const [guests, setGuests] = useState<GuestEntry[]>([defaultGuest()]);
+  const [email, setEmail] = useState(initial?.email ?? "");
+  const [phone, setPhone] = useState(initial?.phone ?? "");
+  const [side, setSide] = useState<string>(initial?.side ?? "");
+  const [message, setMessage] = useState(initial?.message ?? "");
+  const [guests, setGuests] = useState<GuestEntry[]>(initial?.guests ?? [defaultGuest()]);
 
   const updateGuest = (
     index: number,
@@ -202,7 +210,7 @@ export function RsvpForm() {
         className="w-full rounded-full text-base"
         disabled={isPending}
       >
-        {isPending ? "Sending…" : "Send My RSVP"}
+        {isPending ? "Sending…" : initial ? "Update my RSVP" : "Send My RSVP"}
       </Button>
     </form>
   );
