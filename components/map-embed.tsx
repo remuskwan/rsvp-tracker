@@ -11,6 +11,7 @@ export interface MapPin {
   lat: number;
   lng: number;
   description?: string | null;
+  photo_url?: string | null;
 }
 
 const PIN_COLORS: Record<PinType, string> = {

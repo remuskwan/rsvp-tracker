@@ -1,0 +1,4 @@
+ALTER TABLE wedding_info
+  ADD COLUMN IF NOT EXISTS map_pins JSONB NOT NULL DEFAULT '[]'::jsonb,
+  ADD COLUMN IF NOT EXISTS maps_url TEXT,
+  ADD COLUMN IF NOT EXISTS venue_photo_url TEXT;

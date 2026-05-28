@@ -45,6 +45,10 @@ export const weddingInfoSchema = z.object({
     description: z.string().optional().nullable(),
   })).default([]),
   rsvp_deadline: z.string().optional().nullable(),
+  venue_lat: z.number().optional().nullable(),
+  venue_lng: z.number().optional().nullable(),
+  venue_photo_url: z.string().optional().nullable(),
+  how_to_get_there: z.string().optional().nullable(),
 })
 
 export type WeddingInfoFormData = z.infer<typeof weddingInfoSchema>

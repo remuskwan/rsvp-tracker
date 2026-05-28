@@ -67,6 +67,7 @@ interface WeddingInfoData {
   accommodations: string | null;
   maps_url: string | null;
   map_pins: { label: string; type: PinType; lat: number; lng: number; description?: string | null }[];
+  how_to_get_there: string | null;
   sections: Section[];
   faqs: FaqEntry[];
   rsvp_deadline: string | null;
@@ -86,6 +87,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
   const [parkingInfo, setParkingInfo] = useState(initial.parking_info ?? "");
   const [accommodations, setAccommodations] = useState(initial.accommodations ?? "");
   const [mapsUrl, setMapsUrl] = useState(initial.maps_url ?? "");
+  const [howToGetThere, setHowToGetThere] = useState(initial.how_to_get_there ?? "");
   const [mapPins, setMapPins] = useState<MapPinEntry[]>(
     (initial.map_pins ?? []).map((p) => ({
       label: p.label,
@@ -145,6 +147,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
         parking_info: parkingInfo || null,
         accommodations: accommodations || null,
         maps_url: mapsUrl || null,
+        how_to_get_there: howToGetThere || null,
         map_pins: mapPins
           .filter((p) => p.label && p.lat && p.lng)
           .map((p) => ({
@@ -292,6 +295,25 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
             onChange={(e) => setMapsUrl(e.target.value)}
             placeholder="https://maps.app.goo.gl/…"
           />
+        </div>
+      </section>
+
+      {/* How to Get There */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-stone-700">How to Get There</h2>
+        <Separator />
+        <div className="space-y-1">
+          <Label htmlFor="how_to_get_there">Transport Details</Label>
+          <Textarea
+            id="how_to_get_there"
+            value={howToGetThere}
+            onChange={(e) => setHowToGetThere(e.target.value)}
+            placeholder={"By Car\nUnderground parking at...\n\nBy MRT\nBayfront MRT: 10 min walk..."}
+            rows={8}
+          />
+          <p className="text-xs text-stone-400">
+            Shown below the map. Use plain text — line breaks are preserved.
+          </p>
         </div>
       </section>
 
