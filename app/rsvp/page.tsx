@@ -24,18 +24,18 @@ export default async function RsvpPage() {
     : null;
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-warm-50">
       <div className="max-w-2xl mx-auto px-4 py-12">
         <Link
           href="/"
-          className="inline-flex items-center gap-1 text-sm text-stone-500 hover:text-stone-800 mb-8"
+          className="inline-flex items-center gap-1 text-sm text-warm-500 hover:text-warm-800 mb-8"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to wedding details
         </Link>
 
         <div className="text-center mb-10">
-          <div className="relative w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-stone-200 shadow-sm">
+          <div className="relative w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-warm-200 shadow-sm">
             <Image
               src="/rsvp.jpg"
               alt="Wedding couple"
@@ -46,23 +46,23 @@ export default async function RsvpPage() {
             />
           </div>
           <h1
-            className="text-4xl text-stone-800 mb-2"
+            className="text-4xl text-warm-800 mb-2"
             style={{ fontFamily: "var(--font-playfair)" }}
           >
             RSVP
           </h1>
-          <p className="text-stone-500 text-sm">
+          <p className="text-warm-500 text-sm">
             for the wedding of{" "}
-            <span className="font-medium text-stone-700">{coupleNames}</span>
+            <span className="font-medium text-warm-700">{coupleNames}</span>
           </p>
           {deadline && (
-            <p className="text-stone-400 text-xs mt-1">
+            <p className="text-warm-400 text-xs mt-1">
               Kindly respond by {deadline}
             </p>
           )}
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 md:p-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-warm-200 p-6 md:p-8">
           <RsvpForm />
         </div>
       </div>

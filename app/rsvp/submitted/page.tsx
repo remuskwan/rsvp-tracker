@@ -14,21 +14,21 @@ export default async function SubmittedPage() {
   const coupleNames = info?.couple_names ?? "The Happy Couple";
 
   return (
-    <div className="min-h-screen bg-stone-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-warm-50 flex items-center justify-center px-4">
       <div className="text-center max-w-md">
         <div className="flex justify-center mb-6">
           <Heart className="h-12 w-12 text-rose-400 fill-rose-400" />
         </div>
         <h1
-          className="text-4xl text-stone-800 mb-4"
+          className="text-4xl text-warm-800 mb-4"
           style={{ fontFamily: "var(--font-playfair)" }}
         >
           Thank You!
         </h1>
-        <p className="text-stone-600 mb-2">
+        <p className="text-warm-600 mb-2">
           Your RSVP has been received.
         </p>
-        <p className="text-stone-500 text-sm mb-8">
+        <p className="text-warm-500 text-sm mb-8">
           {coupleNames} are so excited to celebrate with you. See you soon!
         </p>
         <Link href="/">
