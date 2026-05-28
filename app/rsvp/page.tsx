@@ -37,7 +37,7 @@ export default async function RsvpPage() {
         <div className="text-center mb-10">
           <div className="relative w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-warm-200 shadow-sm">
             <Image
-              src="/rsvp.jpg"
+              src="/rsvp.jpeg"
               alt="Wedding couple"
               fill
               sizes="128px"
