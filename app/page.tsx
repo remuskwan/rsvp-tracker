@@ -23,6 +23,7 @@ interface WeddingInfo {
   parking_info: string | null;
   accommodations: string | null;
   sections: Section[];
+  faqs: { question: string; answer: string }[];
   rsvp_deadline: string | null;
 }
 
@@ -227,6 +228,11 @@ export default async function Home() {
               question: "Where can I stay?",
               answer: wedding.accommodations,
             },
+            ...(wedding?.faqs ?? []).map((f) => ({
+              icon: "help" as const,
+              question: f.question,
+              answer: f.answer,
+            })),
           ].filter(Boolean) as FaqItem[];
 
           if (faqs.length === 0) return null;

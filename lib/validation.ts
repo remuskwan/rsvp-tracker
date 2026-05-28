@@ -32,6 +32,10 @@ export const weddingInfoSchema = z.object({
     title: z.string(),
     body: z.string(),
   })).default([]),
+  faqs: z.array(z.object({
+    question: z.string(),
+    answer: z.string(),
+  })).default([]),
   rsvp_deadline: z.string().optional().nullable(),
 })
 

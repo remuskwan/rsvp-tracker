@@ -15,6 +15,11 @@ interface Section {
   body: string;
 }
 
+interface FaqEntry {
+  question: string;
+  answer: string;
+}
+
 interface WeddingInfoData {
   couple_names: string;
   event_date: string | null;
@@ -26,6 +31,7 @@ interface WeddingInfoData {
   parking_info: string | null;
   accommodations: string | null;
   sections: Section[];
+  faqs: FaqEntry[];
   rsvp_deadline: string | null;
 }
 
@@ -44,6 +50,18 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
   const [accommodations, setAccommodations] = useState(initial.accommodations ?? "");
   const [rsvpDeadline, setRsvpDeadline] = useState(initial.rsvp_deadline ?? "");
   const [sections, setSections] = useState<Section[]>(initial.sections ?? []);
+  const [faqs, setFaqs] = useState<FaqEntry[]>(initial.faqs ?? []);
+
+  const updateFaq = (index: number, field: "question" | "answer", value: string) => {
+    setFaqs((prev) =>
+      prev.map((f, i) => (i === index ? { ...f, [field]: value } : f))
+    );
+  };
+
+  const addFaq = () => setFaqs((prev) => [...prev, { question: "", answer: "" }]);
+
+  const removeFaq = (index: number) =>
+    setFaqs((prev) => prev.filter((_, i) => i !== index));
 
   const updateSection = (index: number, field: "title" | "body", value: string) => {
     setSections((prev) =>
@@ -72,6 +90,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
         accommodations: accommodations || null,
         rsvp_deadline: rsvpDeadline || null,
         sections,
+        faqs,
       });
 
       if (result.success) {
@@ -198,6 +217,64 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
             rows={3}
           />
         </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-stone-700">FAQ</h2>
+        <Separator />
+        <p className="text-sm text-stone-500">
+          Add questions and answers that will appear in the FAQ accordion on the public page.
+        </p>
+        <div className="space-y-4">
+          {faqs.map((faq, i) => (
+            <div
+              key={i}
+              className="border border-stone-200 rounded-lg p-4 space-y-3 bg-stone-50"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-stone-500">
+                  Question {i + 1}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeFaq(i)}
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="space-y-1">
+                <Label>Question</Label>
+                <Input
+                  value={faq.question}
+                  onChange={(e) => updateFaq(i, "question", e.target.value)}
+                  placeholder="e.g. Is there a gift registry?"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label>Answer</Label>
+                <Textarea
+                  value={faq.answer}
+                  onChange={(e) => updateFaq(i, "answer", e.target.value)}
+                  placeholder="Write your answer here…"
+                  rows={3}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={addFaq}
+          className="w-full border-dashed"
+        >
+          <PlusCircle className="h-4 w-4 mr-2" />
+          Add question
+        </Button>
       </section>
 
       {/* Custom sections */}
