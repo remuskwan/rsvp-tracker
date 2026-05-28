@@ -92,9 +92,11 @@ export default async function Home() {
             </p>
           )}
           <div className="mt-8">
-            <Button size="lg" className="rounded-full px-10 text-base" asChild>
-              <a href="#rsvp">Count me in!</a>
-            </Button>
+            <a href="#rsvp">
+              <Button size="lg" className="rounded-full px-10 text-base">
+                Count me in!
+              </Button>
+            </a>
           </div>
         </div>
       </header>
