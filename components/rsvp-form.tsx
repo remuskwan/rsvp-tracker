@@ -100,7 +100,7 @@ export function RsvpForm() {
       {/* Contact info */}
       <section className="space-y-4">
         <h3
-          className="text-lg text-stone-700"
+          className="text-lg text-warm-700"
           style={{ fontFamily: "var(--font-playfair)" }}
         >
           Your Contact Details
@@ -133,7 +133,7 @@ export function RsvpForm() {
       {/* Guests */}
       <section className="space-y-4">
         <h3
-          className="text-lg text-stone-700"
+          className="text-lg text-warm-700"
           style={{ fontFamily: "var(--font-playfair)" }}
         >
           Who&apos;s Attending?
@@ -166,7 +166,7 @@ export function RsvpForm() {
       {/* Optional extras */}
       <section className="space-y-4">
         <h3
-          className="text-lg text-stone-700"
+          className="text-lg text-warm-700"
           style={{ fontFamily: "var(--font-playfair)" }}
         >
           A Little More

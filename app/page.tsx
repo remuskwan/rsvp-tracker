@@ -57,9 +57,9 @@ export default async function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-warm-50">
       {/* Hero */}
-      <header className="relative bg-stone-100 py-20 px-4 text-center border-b border-stone-200 overflow-hidden">
+      <header className="relative bg-warm-100 py-20 px-4 text-center border-b border-warm-200 overflow-hidden">
         <Image
           src="/hero.jpg"
           alt="Wedding couple"
@@ -69,17 +69,17 @@ export default async function Home() {
           priority
         />
         <div className="relative z-10">
-          <p className="text-sm uppercase tracking-widest text-stone-500 mb-3 font-sans">
+          <p className="text-sm uppercase tracking-widest text-warm-500 mb-3 font-sans">
             You are cordially invited to the wedding of
           </p>
           <h1
-            className="text-5xl md:text-7xl font-heading text-stone-800 mb-6"
+            className="text-5xl md:text-7xl font-heading text-warm-800 mb-6"
             style={{ fontFamily: "var(--font-playfair)" }}
           >
             {wedding?.couple_names ?? "The Happy Couple"}
           </h1>
           {wedding?.event_date && (
-            <p className="text-xl text-stone-600 font-sans">
+            <p className="text-xl text-warm-600 font-sans">
               {formatDate(wedding.event_date)}
             </p>
           )}
@@ -87,7 +87,7 @@ export default async function Home() {
             <CountdownTimer targetDate={wedding.event_date} />
           )}
           {wedding?.rsvp_deadline && (
-            <p className="mt-2 text-sm text-stone-500">
+            <p className="mt-2 text-sm text-warm-500">
               Kindly RSVP by {formatDeadline(wedding.rsvp_deadline)}
             </p>
           )}
@@ -102,23 +102,23 @@ export default async function Home() {
       </header>
 
       {/* Details */}
-      <main className="max-w-2xl mx-auto px-4 py-16 space-y-12">
+      <main className="max-w-2xl mx-auto px-4 py-16 space-y-12 bg-warm-50">
         {/* Venue & Times */}
         {(wedding?.venue_name || wedding?.ceremony_time || wedding?.reception_time) && (
           <section className="space-y-4">
             <h2
-              className="text-2xl text-stone-700"
+              className="text-2xl text-warm-700"
               style={{ fontFamily: "var(--font-playfair)" }}
             >
               Event Details
             </h2>
             <Separator />
-            <div className="space-y-3 text-stone-600">
+            <div className="space-y-3 text-warm-600">
               {wedding?.venue_name && (
                 <div className="flex items-start gap-3">
-                  <MapPin className="h-5 w-5 mt-0.5 text-stone-400 shrink-0" />
+                  <MapPin className="h-5 w-5 mt-0.5 text-warm-400 shrink-0" />
                   <div>
-                    <p className="font-medium text-stone-800">{wedding.venue_name}</p>
+                    <p className="font-medium text-warm-800">{wedding.venue_name}</p>
                     {wedding.venue_address && (
                       <p className="text-sm">{wedding.venue_address}</p>
                     )}
@@ -127,13 +127,13 @@ export default async function Home() {
               )}
               {wedding?.event_date && (
                 <div className="flex items-center gap-3">
-                  <Calendar className="h-5 w-5 text-stone-400 shrink-0" />
+                  <Calendar className="h-5 w-5 text-warm-400 shrink-0" />
                   <p>{formatDate(wedding.event_date)}</p>
                 </div>
               )}
               {wedding?.ceremony_time && (
                 <div className="flex items-center gap-3">
-                  <Clock className="h-5 w-5 text-stone-400 shrink-0" />
+                  <Clock className="h-5 w-5 text-warm-400 shrink-0" />
                   <p>
                     <span className="font-medium">Ceremony:</span>{" "}
                     {wedding.ceremony_time}
@@ -142,7 +142,7 @@ export default async function Home() {
               )}
               {wedding?.reception_time && (
                 <div className="flex items-center gap-3">
-                  <Clock className="h-5 w-5 text-stone-400 shrink-0" />
+                  <Clock className="h-5 w-5 text-warm-400 shrink-0" />
                   <p>
                     <span className="font-medium">Reception:</span>{" "}
                     {wedding.reception_time}
@@ -151,7 +151,7 @@ export default async function Home() {
               )}
               {wedding?.dress_code && (
                 <div className="flex items-center gap-3">
-                  <Shirt className="h-5 w-5 text-stone-400 shrink-0" />
+                  <Shirt className="h-5 w-5 text-warm-400 shrink-0" />
                   <p>
                     <span className="font-medium">Dress Code:</span>{" "}
                     {wedding.dress_code}
@@ -160,18 +160,18 @@ export default async function Home() {
               )}
               {wedding?.parking_info && (
                 <div className="flex items-start gap-3">
-                  <ParkingCircle className="h-5 w-5 mt-0.5 text-stone-400 shrink-0" />
+                  <ParkingCircle className="h-5 w-5 mt-0.5 text-warm-400 shrink-0" />
                   <div>
-                    <p className="font-medium text-stone-800">Parking</p>
+                    <p className="font-medium text-warm-800">Parking</p>
                     <p className="text-sm">{wedding.parking_info}</p>
                   </div>
                 </div>
               )}
               {wedding?.accommodations && (
                 <div className="flex items-start gap-3">
-                  <Hotel className="h-5 w-5 mt-0.5 text-stone-400 shrink-0" />
+                  <Hotel className="h-5 w-5 mt-0.5 text-warm-400 shrink-0" />
                   <div>
-                    <p className="font-medium text-stone-800">Accommodations</p>
+                    <p className="font-medium text-warm-800">Accommodations</p>
                     <p className="text-sm">{wedding.accommodations}</p>
                   </div>
                 </div>
@@ -185,19 +185,19 @@ export default async function Home() {
           wedding.sections.map((section: Section, i: number) => (
             <section key={i} className="space-y-4">
               <h2
-                className="text-2xl text-stone-700"
+                className="text-2xl text-warm-700"
                 style={{ fontFamily: "var(--font-playfair)" }}
               >
                 {section.title}
               </h2>
               <Separator />
-              <p className="text-stone-600 whitespace-pre-line">{section.body}</p>
+              <p className="text-warm-600 whitespace-pre-line">{section.body}</p>
             </section>
           ))}
 
         {/* RSVP CTA */}
         <section className="text-center py-8">
-          <p className="text-stone-500 mb-4">
+          <p className="text-warm-500 mb-4">
             {wedding?.rsvp_deadline
               ? `Please let us know by ${formatDeadline(wedding.rsvp_deadline)}`
               : "Please let us know if you can make it"}

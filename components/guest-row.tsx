@@ -25,9 +25,9 @@ export function GuestRow({
   onChange,
 }: GuestRowProps) {
   return (
-    <div className="border border-stone-200 rounded-lg p-4 space-y-3 bg-white">
+    <div className="border border-warm-200 rounded-lg p-4 space-y-3 bg-white">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-medium text-stone-700">
+        <h4 className="text-sm font-medium text-warm-700">
           {isFirst ? "You" : `Guest ${index + 1}`}
         </h4>
         {!isFirst && onRemove && (
@@ -66,7 +66,7 @@ export function GuestRow({
                 name={`guest-attending-${index}`}
                 checked={attending === true}
                 onChange={() => onChange("attending", true)}
-                className="accent-stone-800"
+                className="accent-terracotta-500"
               />
               <span className="text-sm">Yes</span>
             </label>
@@ -76,7 +76,7 @@ export function GuestRow({
                 name={`guest-attending-${index}`}
                 checked={attending === false}
                 onChange={() => onChange("attending", false)}
-                className="accent-stone-800"
+                className="accent-terracotta-500"
               />
               <span className="text-sm">No</span>
             </label>
