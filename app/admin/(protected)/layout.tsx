@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { LayoutDashboard, Edit, QrCode, LogOut, Users } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { AdminShell } from "@/components/admin-shell";
 
 async function AdminNav() {
   return (
@@ -57,19 +58,8 @@ export default async function AdminLayout({
   await requireAdmin();
 
   return (
-    <div className="min-h-screen flex">
-      {/* Sidebar */}
-      <aside className="w-56 shrink-0 bg-stone-100 border-r border-stone-200 flex flex-col">
-        <div className="p-4 border-b border-stone-200">
-          <h2 className="text-sm font-semibold text-stone-600 uppercase tracking-widest">
-            Admin
-          </h2>
-        </div>
-        <AdminNav />
-      </aside>
-
-      {/* Main */}
-      <main className="flex-1 bg-white overflow-auto">{children}</main>
-    </div>
+    <AdminShell nav={<AdminNav />}>
+      {children}
+    </AdminShell>
   );
 }

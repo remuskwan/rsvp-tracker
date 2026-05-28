@@ -9,7 +9,7 @@ export default async function QrPage() {
   const rsvpUrl = `${siteUrl}/rsvp`;
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-stone-800">QR Code</h1>
         <p className="text-sm text-stone-500 mt-1">

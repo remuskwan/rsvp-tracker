@@ -13,7 +13,7 @@ export default async function AdminsPage() {
 
   if (error) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <p className="text-destructive">Failed to load admins: {error.message}</p>
       </div>
     );

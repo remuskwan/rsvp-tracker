@@ -289,7 +289,7 @@ export function RsvpsTable({ rsvps }: { rsvps: Rsvp[] }) {
   return (
     <div className="space-y-4">
       {/* Stats */}
-      <div className="flex gap-6 text-sm text-stone-600">
+      <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-stone-600">
         <span>
           <strong className="text-stone-900">{rsvps.length}</strong> submissions
         </span>
@@ -312,17 +312,17 @@ export function RsvpsTable({ rsvps }: { rsvps: Rsvp[] }) {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
-        <div className="relative">
+        <div className="relative flex-1 min-w-48">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
           <Input
             placeholder="Search name or email…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 w-56"
+            className="pl-9 w-full"
           />
         </div>
         <Select value={filterAttending} onValueChange={(v) => setFilterAttending(v ?? "all")}>
-          <SelectTrigger className="w-36">
+          <SelectTrigger className="w-full sm:w-36">
             <SelectValue placeholder="Attending" />
           </SelectTrigger>
           <SelectContent>
@@ -332,7 +332,7 @@ export function RsvpsTable({ rsvps }: { rsvps: Rsvp[] }) {
           </SelectContent>
         </Select>
         <Select value={filterStatus} onValueChange={(v) => setFilterStatus(v ?? "all")}>
-          <SelectTrigger className="w-40">
+          <SelectTrigger className="w-full sm:w-40">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -353,7 +353,7 @@ export function RsvpsTable({ rsvps }: { rsvps: Rsvp[] }) {
       </div>
 
       {/* Table */}
-      <div className="border border-stone-200 rounded-lg overflow-hidden">
+      <div className="border border-stone-200 rounded-lg overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="bg-stone-50">

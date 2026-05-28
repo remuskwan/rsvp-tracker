@@ -15,7 +15,7 @@ export default async function WeddingInfoPage() {
     .single();
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-stone-800">
           Edit Wedding Info
