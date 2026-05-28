@@ -98,3 +98,18 @@ export async function updateRsvpStatus(
   revalidatePath("/admin/dashboard");
   return { success: true };
 }
+
+export async function deleteRsvp(id: string) {
+  await requireAdmin();
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("rsvps").delete().eq("id", id);
+
+  if (error) {
+    console.error("RSVP delete error:", error);
+    return { success: false, error: "Failed to delete." };
+  }
+
+  revalidatePath("/admin/dashboard");
+  return { success: true };
+}

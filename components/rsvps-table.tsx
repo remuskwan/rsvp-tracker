@@ -21,7 +21,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { updateRsvpStatus } from "@/app/actions/admin";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  AlertDialogClose,
+} from "@/components/ui/alert-dialog";
+import { deleteRsvp, updateRsvpStatus } from "@/app/actions/admin";
 import {
   Mail,
   Phone,
@@ -29,6 +39,7 @@ import {
   ChevronUp,
   Download,
   Search,
+  Trash2,
 } from "lucide-react";
 
 interface GuestEntry {
@@ -75,6 +86,13 @@ function RsvpRow({ rsvp }: { rsvp: Rsvp }) {
   const [notes, setNotes] = useState(rsvp.admin_notes ?? "");
   const [editing, setEditing] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [isDeleting, startDeleteTransition] = useTransition();
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const dietarySummary = rsvp.guests
+    .filter((g) => g.dietary && g.dietary.trim())
+    .map((g) => g.dietary!.trim())
+    .join(", ");
 
   const save = () => {
     startTransition(async () => {
@@ -84,6 +102,18 @@ function RsvpRow({ rsvp }: { rsvp: Rsvp }) {
         setEditing(false);
       } else {
         toast.error(result.error ?? "Update failed");
+      }
+    });
+  };
+
+  const confirmDelete = () => {
+    startDeleteTransition(async () => {
+      const result = await deleteRsvp(rsvp.id);
+      if (result.success) {
+        toast.success(`Deleted RSVP from ${rsvp.submitter_name}`);
+        setDeleteOpen(false);
+      } else {
+        toast.error(result.error ?? "Delete failed");
       }
     });
   };
@@ -138,6 +168,18 @@ function RsvpRow({ rsvp }: { rsvp: Rsvp }) {
             <span className="text-stone-300 text-sm">—</span>
           )}
         </TableCell>
+        <TableCell className="max-w-[180px]">
+          {dietarySummary ? (
+            <span
+              className="text-sm text-stone-700 line-clamp-2"
+              title={dietarySummary}
+            >
+              {dietarySummary}
+            </span>
+          ) : (
+            <span className="text-stone-300 text-sm">—</span>
+          )}
+        </TableCell>
         <TableCell>
           <Badge variant={STATUS_COLORS[status] ?? "default"}>
             {STATUS_LABELS[status] ?? status}
@@ -149,11 +191,57 @@ function RsvpRow({ rsvp }: { rsvp: Rsvp }) {
             month: "short",
           })}
         </TableCell>
+        <TableCell className="text-right">
+          <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+            <AlertDialogTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  aria-label={`Delete RSVP from ${rsvp.submitter_name}`}
+                  className="text-stone-400 hover:text-destructive"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              }
+            >
+              <Trash2 className="h-4 w-4" />
+            </AlertDialogTrigger>
+            <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete this RSVP?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This permanently removes the RSVP from{" "}
+                  <strong className="text-stone-700">
+                    {rsvp.submitter_name}
+                  </strong>{" "}
+                  ({rsvp.email}) and all guest details. This cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogClose
+                  render={
+                    <Button variant="outline" size="sm" disabled={isDeleting} />
+                  }
+                >
+                  Cancel
+                </AlertDialogClose>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={confirmDelete}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? "Deleting…" : "Delete"}
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </TableCell>
       </TableRow>
 
       {expanded && (
         <TableRow className="bg-stone-50">
-          <TableCell colSpan={6} className="py-4">
+          <TableCell colSpan={8} className="py-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4">
               {/* Guests */}
               <div>
@@ -361,15 +449,19 @@ export function RsvpsTable({ rsvps }: { rsvps: Rsvp[] }) {
               <TableHead>Contact</TableHead>
               <TableHead>Attending</TableHead>
               <TableHead>Side</TableHead>
+              <TableHead>Dietary</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Date</TableHead>
+              <TableHead className="w-12">
+                <span className="sr-only">Actions</span>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={8}
                   className="text-center text-stone-400 py-8"
                 >
                   No RSVPs found
