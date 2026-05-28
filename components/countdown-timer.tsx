@@ -32,10 +32,15 @@ export function CountdownTimer({ targetDate }: { targetDate: string }) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
 
   useEffect(() => {
-    setMounted(true);
-    setTimeLeft(computeTimeLeft(targetDate));
+    const initId = setTimeout(() => {
+      setMounted(true);
+      setTimeLeft(computeTimeLeft(targetDate));
+    }, 0);
     const id = setInterval(() => setTimeLeft(computeTimeLeft(targetDate)), 1000);
-    return () => clearInterval(id);
+    return () => {
+      clearTimeout(initId);
+      clearInterval(id);
+    };
   }, [targetDate]);
 
   if (!mounted) {

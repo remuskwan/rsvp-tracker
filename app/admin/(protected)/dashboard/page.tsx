@@ -15,14 +15,14 @@ export default async function DashboardPage() {
 
   if (error) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <p className="text-destructive">Failed to load RSVPs: {error.message}</p>
       </div>
     );
   }
 
   return (
-    <div className="p-8 max-w-7xl">
+    <div className="p-4 md:p-8 max-w-7xl">
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-stone-800">RSVPs</h1>
         <p className="text-sm text-stone-500 mt-1">
