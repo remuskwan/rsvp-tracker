@@ -6,7 +6,8 @@ import { RsvpForm } from "@/components/rsvp-form";
 import { Calendar, MapPin, Shirt, ParkingCircle, Hotel, Gem, Utensils } from "lucide-react";
 import { CountdownTimer } from "@/components/countdown-timer";
 import { FaqCarousel } from "@/components/faq-carousel";
-import { MapEmbed, type MapPin as MapPinData } from "@/components/map-embed";
+import { VenueMapLoader } from "@/components/venue-map-loader";
+import type { MapPin as MapPinData } from "@/components/map-embed";
 
 interface Section {
   title: string;
@@ -25,9 +26,12 @@ interface WeddingInfo {
   accommodations: string | null;
   sections: Section[];
   faqs: { question: string; answer: string }[];
-  maps_url: string | null;
-  map_pins: MapPinData[];
   rsvp_deadline: string | null;
+  venue_lat: number | null;
+  venue_lng: number | null;
+  venue_photo_url: string | null;
+  map_pins: MapPinData[];
+  how_to_get_there: string | null;
 }
 
 export const revalidate = 60; // revalidate every minute
@@ -190,7 +194,7 @@ export default async function Home() {
         )}
 
         {/* How to Get There */}
-        {((wedding?.map_pins ?? []).length > 0 || wedding?.maps_url) && (
+        {(wedding?.venue_lat && wedding?.venue_lng && wedding?.venue_name || wedding?.how_to_get_there) && (
           <section className="space-y-4">
             <h2
               className="text-2xl text-warm-700"
@@ -199,10 +203,21 @@ export default async function Home() {
               How to Get There
             </h2>
             <Separator />
-            <MapEmbed
-              pins={wedding?.map_pins ?? []}
-              mapsUrl={wedding?.maps_url}
-            />
+            {wedding?.venue_lat && wedding?.venue_lng && wedding?.venue_name && (
+              <VenueMapLoader
+                lat={wedding.venue_lat}
+                lng={wedding.venue_lng}
+                venueName={wedding.venue_name}
+                venueAddress={wedding.venue_address}
+                venuePhotoUrl={wedding.venue_photo_url}
+                mapPins={wedding.map_pins ?? []}
+              />
+            )}
+            {wedding?.how_to_get_there && (
+              <p className="text-warm-600 whitespace-pre-line text-sm leading-relaxed">
+                {wedding.how_to_get_there}
+              </p>
+            )}
           </section>
         )}
 
