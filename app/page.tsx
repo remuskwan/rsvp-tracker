@@ -3,9 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { RsvpForm } from "@/components/rsvp-form";
-import { Calendar, MapPin, Clock, Shirt, ParkingCircle, Hotel, Navigation } from "lucide-react";
+import { Calendar, MapPin, Clock, Shirt, ParkingCircle, Hotel } from "lucide-react";
 import { CountdownTimer } from "@/components/countdown-timer";
 import { FaqCarousel } from "@/components/faq-carousel";
+import { MapEmbed, type MapPin as MapPinData } from "@/components/map-embed";
 
 interface Section {
   title: string;
@@ -25,6 +26,7 @@ interface WeddingInfo {
   sections: Section[];
   faqs: { question: string; answer: string }[];
   maps_url: string | null;
+  map_pins: MapPinData[];
   rsvp_deadline: string | null;
 }
 
@@ -184,7 +186,7 @@ export default async function Home() {
         )}
 
         {/* How to Get There */}
-        {wedding?.maps_url && (
+        {((wedding?.map_pins ?? []).length > 0 || wedding?.maps_url) && (
           <section className="space-y-4">
             <h2
               className="text-2xl text-warm-700"
@@ -193,15 +195,10 @@ export default async function Home() {
               How to Get There
             </h2>
             <Separator />
-            <a
-              href={wedding.maps_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-warm-800 text-white text-sm font-medium hover:bg-warm-700 transition-colors"
-            >
-              <Navigation className="h-4 w-4" />
-              Open in Google Maps
-            </a>
+            <MapEmbed
+              pins={wedding?.map_pins ?? []}
+              mapsUrl={wedding?.maps_url}
+            />
           </section>
         )}
 

@@ -37,6 +37,13 @@ export const weddingInfoSchema = z.object({
     answer: z.string(),
   })).default([]),
   maps_url: z.string().url().optional().nullable(),
+  map_pins: z.array(z.object({
+    label: z.string().min(1),
+    type: z.enum(["venue", "pickup", "mrt", "parking", "hotel", "other"]),
+    lat: z.number(),
+    lng: z.number(),
+    description: z.string().optional().nullable(),
+  })).default([]),
   rsvp_deadline: z.string().optional().nullable(),
 })
 

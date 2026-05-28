@@ -9,6 +9,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { updateWeddingInfo } from "@/app/actions/admin";
 import { PlusCircle, Trash2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { type PinType } from "@/components/map-embed";
 
 interface Section {
   title: string;
@@ -19,6 +27,32 @@ interface FaqEntry {
   question: string;
   answer: string;
 }
+
+interface MapPinEntry {
+  label: string;
+  type: PinType;
+  lat: string;
+  lng: string;
+  description: string;
+}
+
+const PIN_TYPE_OPTIONS: { value: PinType; label: string }[] = [
+  { value: "venue",   label: "Venue" },
+  { value: "pickup",  label: "Pickup / Drop-off" },
+  { value: "mrt",     label: "MRT Station" },
+  { value: "parking", label: "Parking" },
+  { value: "hotel",   label: "Hotel" },
+  { value: "other",   label: "Other" },
+];
+
+const PIN_COLORS: Record<PinType, string> = {
+  venue:   "#d97706",
+  pickup:  "#2563eb",
+  mrt:     "#16a34a",
+  parking: "#7c3aed",
+  hotel:   "#db2777",
+  other:   "#6b7280",
+};
 
 interface WeddingInfoData {
   couple_names: string;
@@ -31,6 +65,7 @@ interface WeddingInfoData {
   parking_info: string | null;
   accommodations: string | null;
   maps_url: string | null;
+  map_pins: { label: string; type: PinType; lat: number; lng: number; description?: string | null }[];
   sections: Section[];
   faqs: FaqEntry[];
   rsvp_deadline: string | null;
@@ -50,9 +85,27 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
   const [parkingInfo, setParkingInfo] = useState(initial.parking_info ?? "");
   const [accommodations, setAccommodations] = useState(initial.accommodations ?? "");
   const [mapsUrl, setMapsUrl] = useState(initial.maps_url ?? "");
+  const [mapPins, setMapPins] = useState<MapPinEntry[]>(
+    (initial.map_pins ?? []).map((p) => ({
+      label: p.label,
+      type: p.type,
+      lat: String(p.lat),
+      lng: String(p.lng),
+      description: p.description ?? "",
+    }))
+  );
   const [rsvpDeadline, setRsvpDeadline] = useState(initial.rsvp_deadline ?? "");
   const [sections, setSections] = useState<Section[]>(initial.sections ?? []);
   const [faqs, setFaqs] = useState<FaqEntry[]>(initial.faqs ?? []);
+
+  const updatePin = (index: number, field: keyof MapPinEntry, value: string) =>
+    setMapPins((prev) => prev.map((p, i) => (i === index ? { ...p, [field]: value } : p)));
+
+  const addPin = () =>
+    setMapPins((prev) => [...prev, { label: "", type: "other", lat: "", lng: "", description: "" }]);
+
+  const removePin = (index: number) =>
+    setMapPins((prev) => prev.filter((_, i) => i !== index));
 
   const updateFaq = (index: number, field: "question" | "answer", value: string) => {
     setFaqs((prev) =>
@@ -91,6 +144,15 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
         parking_info: parkingInfo || null,
         accommodations: accommodations || null,
         maps_url: mapsUrl || null,
+        map_pins: mapPins
+          .filter((p) => p.label && p.lat && p.lng)
+          .map((p) => ({
+            label: p.label,
+            type: p.type,
+            lat: parseFloat(p.lat),
+            lng: parseFloat(p.lng),
+            description: p.description || null,
+          })),
         rsvp_deadline: rsvpDeadline || null,
         sections,
         faqs,
@@ -230,6 +292,106 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
             placeholder="https://maps.app.goo.gl/…"
           />
         </div>
+      </section>
+
+      {/* Map Pins */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-stone-700">Map Pins</h2>
+        <Separator />
+        <p className="text-sm text-stone-500">
+          Add pins to the interactive map — venue entrance, pickup/drop-off points, MRT stations, etc.
+          To get coordinates: open Google Maps, right-click a location, and copy the lat/lng numbers shown.
+        </p>
+        <div className="space-y-4">
+          {mapPins.map((pin, i) => (
+            <div
+              key={i}
+              className="border border-stone-200 rounded-lg p-4 space-y-3 bg-stone-50"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="inline-block w-3 h-3 rounded-full shrink-0"
+                    style={{ background: PIN_COLORS[pin.type] }}
+                  />
+                  <span className="text-xs font-medium text-stone-500">Pin {i + 1}</span>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removePin(i)}
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label>Label</Label>
+                  <Input
+                    value={pin.label}
+                    onChange={(e) => updatePin(i, "label", e.target.value)}
+                    placeholder="e.g. Main Entrance"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label>Type</Label>
+                  <Select
+                    value={pin.type}
+                    onValueChange={(v) => v && updatePin(i, "type", v)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PIN_TYPE_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label>Latitude</Label>
+                  <Input
+                    value={pin.lat}
+                    onChange={(e) => updatePin(i, "lat", e.target.value)}
+                    placeholder="e.g. 1.3521"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label>Longitude</Label>
+                  <Input
+                    value={pin.lng}
+                    onChange={(e) => updatePin(i, "lng", e.target.value)}
+                    placeholder="e.g. 103.8198"
+                  />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label>Description <span className="text-stone-400 font-normal">(optional)</span></Label>
+                <Input
+                  value={pin.description}
+                  onChange={(e) => updatePin(i, "description", e.target.value)}
+                  placeholder="e.g. Use the side entrance on Orchard Road"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={addPin}
+          className="w-full border-dashed"
+        >
+          <PlusCircle className="h-4 w-4 mr-2" />
+          Add pin
+        </Button>
       </section>
 
       {/* FAQ */}
