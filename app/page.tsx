@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { RsvpForm } from "@/components/rsvp-form";
 import { Calendar, MapPin, Clock, Shirt, ParkingCircle, Hotel } from "lucide-react";
 import { CountdownTimer } from "@/components/countdown-timer";
+import { FaqCarousel, type FaqItem } from "@/components/faq-carousel";
 
 interface Section {
   title: string;
@@ -194,6 +195,55 @@ export default async function Home() {
               <p className="text-warm-600 whitespace-pre-line">{section.body}</p>
             </section>
           ))}
+
+        {/* FAQ Carousel */}
+        {(() => {
+          const faqs: FaqItem[] = [
+            wedding?.venue_name && {
+              icon: "map-pin" as const,
+              question: "Where is the venue?",
+              answer: [wedding.venue_name, wedding.venue_address].filter(Boolean).join("\n"),
+            },
+            (wedding?.ceremony_time || wedding?.reception_time) && {
+              icon: "clock" as const,
+              question: "What time should I arrive?",
+              answer: [
+                wedding.ceremony_time && `Ceremony: ${wedding.ceremony_time}`,
+                wedding.reception_time && `Reception: ${wedding.reception_time}`,
+              ].filter(Boolean).join("\n"),
+            },
+            wedding?.dress_code && {
+              icon: "shirt" as const,
+              question: "What's the dress code?",
+              answer: wedding.dress_code,
+            },
+            wedding?.parking_info && {
+              icon: "parking" as const,
+              question: "Where should I park?",
+              answer: wedding.parking_info,
+            },
+            wedding?.accommodations && {
+              icon: "hotel" as const,
+              question: "Where can I stay?",
+              answer: wedding.accommodations,
+            },
+          ].filter(Boolean) as FaqItem[];
+
+          if (faqs.length === 0) return null;
+
+          return (
+            <section className="space-y-4">
+              <h2
+                className="text-2xl text-warm-700"
+                style={{ fontFamily: "var(--font-playfair)" }}
+              >
+                FAQs
+              </h2>
+              <Separator />
+              <FaqCarousel items={faqs} />
+            </section>
+          );
+        })()}
 
         {/* RSVP Form */}
         <section id="rsvp" className="py-8">
