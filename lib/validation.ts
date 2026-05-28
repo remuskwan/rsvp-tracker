@@ -36,6 +36,7 @@ export const weddingInfoSchema = z.object({
     question: z.string(),
     answer: z.string(),
   })).default([]),
+  maps_url: z.string().url().optional().nullable(),
   rsvp_deadline: z.string().optional().nullable(),
 })
 

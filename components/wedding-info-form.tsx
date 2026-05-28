@@ -30,6 +30,7 @@ interface WeddingInfoData {
   dress_code: string | null;
   parking_info: string | null;
   accommodations: string | null;
+  maps_url: string | null;
   sections: Section[];
   faqs: FaqEntry[];
   rsvp_deadline: string | null;
@@ -48,6 +49,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
   const [dressCode, setDressCode] = useState(initial.dress_code ?? "");
   const [parkingInfo, setParkingInfo] = useState(initial.parking_info ?? "");
   const [accommodations, setAccommodations] = useState(initial.accommodations ?? "");
+  const [mapsUrl, setMapsUrl] = useState(initial.maps_url ?? "");
   const [rsvpDeadline, setRsvpDeadline] = useState(initial.rsvp_deadline ?? "");
   const [sections, setSections] = useState<Section[]>(initial.sections ?? []);
   const [faqs, setFaqs] = useState<FaqEntry[]>(initial.faqs ?? []);
@@ -88,6 +90,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
         dress_code: dressCode || null,
         parking_info: parkingInfo || null,
         accommodations: accommodations || null,
+        maps_url: mapsUrl || null,
         rsvp_deadline: rsvpDeadline || null,
         sections,
         faqs,
@@ -215,6 +218,16 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
             onChange={(e) => setAccommodations(e.target.value)}
             placeholder="Room block at Grand Ballroom Hotel — use code WEDDING for 15% off…"
             rows={3}
+          />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="maps_url">Google Maps Link</Label>
+          <Input
+            id="maps_url"
+            type="url"
+            value={mapsUrl}
+            onChange={(e) => setMapsUrl(e.target.value)}
+            placeholder="https://maps.app.goo.gl/…"
           />
         </div>
       </section>
