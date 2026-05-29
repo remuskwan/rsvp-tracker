@@ -61,7 +61,7 @@ export function AdminsClient({ admins: initial, currentUserEmail }: AdminsClient
       </div>
 
       {/* Current admins list */}
-      <div className="bg-white border border-stone-200 rounded-2xl overflow-hidden mb-8">
+      <div className="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-2xl overflow-hidden mb-8">
         {admins.length === 0 ? (
           <p className="p-6 text-sm text-stone-400 text-center">No admins found.</p>
         ) : (
@@ -95,7 +95,7 @@ export function AdminsClient({ admins: initial, currentUserEmail }: AdminsClient
       </div>
 
       {/* Add admin form */}
-      <div className="bg-white border border-stone-200 rounded-2xl p-6">
+      <div className="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-2xl p-6">
         <h2 className="text-sm font-semibold text-stone-700 mb-4">Add admin</h2>
         <div className="flex gap-3">
           <div className="flex-1 space-y-1">

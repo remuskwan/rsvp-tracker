@@ -44,7 +44,7 @@ export function QrCodeDisplay({ url }: { url: string }) {
   return (
     <div className="space-y-6 max-w-sm">
       {/* QR Preview */}
-      <div className="border border-stone-200 rounded-2xl p-6 bg-white text-center">
+      <div className="border border-stone-200 dark:border-stone-700 rounded-2xl p-6 bg-white dark:bg-stone-800 text-center">
         {pngDataUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img

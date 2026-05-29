@@ -121,7 +121,7 @@ export function PinLocationSearch({ address, onSelect }: PinLocationSearchProps)
       </div>
 
       {open && predictions.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-stone-200 rounded-lg shadow-lg overflow-hidden">
+        <div className="absolute z-50 w-full mt-1 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg shadow-lg overflow-hidden">
           {predictions.map((p) => (
             <button
               key={p.placeId}
