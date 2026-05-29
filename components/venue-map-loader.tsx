@@ -14,6 +14,7 @@ interface Props {
   venueName: string;
   venueAddress?: string | null;
   venuePhotoUrl?: string | null;
+  mapsUrl?: string | null;
   mapPins?: MapPinData[];
 }
 
