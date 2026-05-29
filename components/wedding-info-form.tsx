@@ -159,6 +159,10 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
         how_to_get_there: howToGetThere || null,
         venue_photo_url: venuePhotoUrl || null,
         map_pins: mapPins
+          .map((p) => ({
+            ...p,
+            label: p.label || p.address || p.maps_url,
+          }))
           .filter((p) => p.label && p.lat && p.lng)
           .map((p) => ({
             label: p.label,
