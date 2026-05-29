@@ -14,13 +14,12 @@ interface PlacePrediction {
 }
 
 interface PinLocationSearchProps {
-  lat: string;
-  lng: string;
-  onSelect: (lat: string, lng: string, suggestedLabel: string) => void;
+  address?: string;
+  onSelect: (lat: string, lng: string, suggestedLabel: string, address: string) => void;
 }
 
-export function PinLocationSearch({ lat, lng, onSelect }: PinLocationSearchProps) {
-  const [query, setQuery] = useState("");
+export function PinLocationSearch({ address, onSelect }: PinLocationSearchProps) {
+  const [query, setQuery] = useState(address ?? "");
   const [predictions, setPredictions] = useState<PlacePrediction[]>([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -84,7 +83,13 @@ export function PinLocationSearch({ lat, lng, onSelect }: PinLocationSearchProps
       const res = await fetch(`/api/places/details?placeId=${prediction.placeId}`);
       const data = await res.json();
       if (data.location) {
-        onSelect(String(data.location.latitude), String(data.location.longitude), label);
+        const fullAddress = data.formattedAddress ?? prediction.text.text;
+        onSelect(
+          String(data.location.latitude),
+          String(data.location.longitude),
+          label,
+          fullAddress
+        );
       }
     } catch {
       // fail silently
@@ -92,8 +97,6 @@ export function PinLocationSearch({ lat, lng, onSelect }: PinLocationSearchProps
       setLoading(false);
     }
   };
-
-  const hasCoords = lat && lng;
 
   return (
     <div ref={containerRef} className="relative space-y-1">
@@ -142,10 +145,8 @@ export function PinLocationSearch({ lat, lng, onSelect }: PinLocationSearchProps
         </div>
       )}
 
-      {hasCoords && (
-        <p className="text-xs text-stone-400">
-          {parseFloat(lat).toFixed(5)}, {parseFloat(lng).toFixed(5)}
-        </p>
+      {address && (
+        <p className="text-sm text-stone-700">{address}</p>
       )}
     </div>
   );
