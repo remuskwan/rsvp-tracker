@@ -28,6 +28,7 @@ interface SelectedPin {
   label: string;
   address?: string | null;
   photo_url?: string | null;
+  maps_url?: string | null;
   lat: number;
   lng: number;
   type: PinType;
@@ -97,8 +98,12 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
   const directionsUrl = selected
     ? `https://www.google.com/maps/dir/?api=1&destination=${selected.lat},${selected.lng}`
     : "";
+  // Prefer the admin-supplied Google Maps URL so the link opens the real place
+  // page (name, photos, reviews) instead of dropping a generic pin at lat/lng.
   const viewOnMapsUrl = selected
-    ? `https://www.google.com/maps/search/?api=1&query=${selected.lat},${selected.lng}`
+    ? selected.maps_url
+      ? selected.maps_url
+      : `https://www.google.com/maps/search/?api=1&query=${selected.lat},${selected.lng}`
     : "";
 
   return (

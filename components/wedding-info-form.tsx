@@ -37,6 +37,7 @@ interface MapPinEntry {
   lng: string;
   description: string;
   photo_url: string;
+  maps_url: string;
 }
 
 const PIN_TYPE_OPTIONS: { value: PinType; label: string }[] = [
@@ -68,7 +69,7 @@ interface WeddingInfoData {
   parking_info: string | null;
   accommodations: string | null;
   maps_url: string | null;
-  map_pins: { label: string; type: PinType; lat: number; lng: number; description?: string | null; photo_url?: string | null }[];
+  map_pins: { label: string; type: PinType; lat: number; lng: number; description?: string | null; photo_url?: string | null; maps_url?: string | null }[];
   how_to_get_there: string | null;
   venue_photo_url: string | null;
   sections: Section[];
@@ -100,6 +101,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
       lng: String(p.lng),
       description: p.description ?? "",
       photo_url: p.photo_url ?? "",
+      maps_url: p.maps_url ?? "",
     }))
   );
   const [rsvpDeadline, setRsvpDeadline] = useState(initial.rsvp_deadline ?? "");
@@ -110,7 +112,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
     setMapPins((prev) => prev.map((p, i) => (i === index ? { ...p, [field]: value } : p)));
 
   const addPin = () =>
-    setMapPins((prev) => [...prev, { label: "", type: "other", lat: "", lng: "", description: "", photo_url: "" }]);
+    setMapPins((prev) => [...prev, { label: "", type: "other", lat: "", lng: "", description: "", photo_url: "", maps_url: "" }]);
 
   const removePin = (index: number) =>
     setMapPins((prev) => prev.filter((_, i) => i !== index));
@@ -163,6 +165,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
             lng: parseFloat(p.lng),
             description: p.description || null,
             photo_url: p.photo_url || null,
+            maps_url: p.maps_url || null,
           })),
         rsvp_deadline: rsvpDeadline || null,
         sections,
@@ -418,6 +421,15 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
                 <PinImageUpload
                   url={pin.photo_url || null}
                   onChange={(url) => updatePin(i, "photo_url", url ?? "")}
+                />
+              </div>
+              <div className="space-y-1">
+                <Label>Google Maps Link <span className="text-stone-400 font-normal">(optional)</span></Label>
+                <Input
+                  type="url"
+                  value={pin.maps_url}
+                  onChange={(e) => updatePin(i, "maps_url", e.target.value)}
+                  placeholder="https://maps.app.goo.gl/..."
                 />
               </div>
             </div>
