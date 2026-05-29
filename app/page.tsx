@@ -30,6 +30,7 @@ interface WeddingInfo {
   venue_lat: number | null;
   venue_lng: number | null;
   venue_photo_url: string | null;
+  maps_url: string | null;
   map_pins: MapPinData[];
   how_to_get_there: string | null;
 }
@@ -210,6 +211,7 @@ export default async function Home() {
                 venueName={wedding.venue_name}
                 venueAddress={wedding.venue_address}
                 venuePhotoUrl={wedding.venue_photo_url}
+                mapsUrl={wedding.maps_url}
                 mapPins={wedding.map_pins ?? []}
               />
             )}
