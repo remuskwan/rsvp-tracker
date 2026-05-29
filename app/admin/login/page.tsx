@@ -75,24 +75,24 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-stone-50 dark:bg-stone-950 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <Heart className="h-8 w-8 text-stone-400 mx-auto mb-3" />
-          <h1 className="text-2xl font-semibold text-stone-800">Admin Login</h1>
-          <p className="text-sm text-stone-500 mt-1">Wedding RSVP Tracker</p>
+          <h1 className="text-2xl font-semibold text-stone-800 dark:text-stone-100">Admin Login</h1>
+          <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">Wedding RSVP Tracker</p>
         </div>
 
         {sent ? (
-          <div className="bg-white rounded-2xl border border-stone-200 p-8 text-center">
-            <p className="text-stone-700 font-medium mb-2">Check your inbox!</p>
-            <p className="text-sm text-stone-500">
+          <div className="bg-white dark:bg-stone-800 rounded-2xl border border-stone-200 dark:border-stone-700 p-8 text-center">
+            <p className="text-stone-700 dark:text-stone-200 font-medium mb-2">Check your inbox!</p>
+            <p className="text-sm text-stone-500 dark:text-stone-400">
               We sent a magic link to <strong>{email}</strong>. Click it to sign
               in.
             </p>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-stone-200 p-8 space-y-5">
+          <div className="bg-white dark:bg-stone-800 rounded-2xl border border-stone-200 dark:border-stone-700 p-8 space-y-5">
             {/* Google OAuth */}
             <Button
               type="button"
@@ -108,10 +108,10 @@ export default function LoginPage() {
             {/* Divider */}
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-stone-200" />
+                <span className="w-full border-t border-stone-200 dark:border-stone-600" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-stone-400">or</span>
+                <span className="bg-white dark:bg-stone-800 px-2 text-stone-400 dark:text-stone-500">or</span>
               </div>
             </div>
 
