@@ -47,7 +47,7 @@ export function PinImageUpload({ url, onChange }: PinImageUploadProps) {
       {url ? (
         <div className="relative rounded-lg overflow-hidden border border-stone-200" style={{ height: 120 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={url} alt="Pin photo" className="w-full h-full object-cover" />
+          <img src={url} alt="Pin photo" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-colors flex items-center justify-center gap-2 opacity-0 hover:opacity-100">
             <button
               type="button"
