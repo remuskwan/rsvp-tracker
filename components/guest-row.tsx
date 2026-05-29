@@ -25,7 +25,7 @@ export function GuestRow({
   onChange,
 }: GuestRowProps) {
   return (
-    <div className="border border-warm-200 rounded-lg p-4 space-y-3 bg-card">
+    <div className="border border-warm-200 rounded-lg p-4 space-y-3 bg-muted">
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-medium text-warm-700">
           {isFirst ? "You" : `Guest ${index + 1}`}
