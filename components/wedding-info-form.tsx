@@ -330,7 +330,9 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
             rows={8}
           />
           <p className="text-xs text-stone-400">
-            Shown below the map. Use plain text — line breaks are preserved.
+            Shown below the map. Line breaks are preserved. Reference a pin
+            with <code className="px-1 py-0.5 rounded bg-stone-100 text-stone-600">[[Pin Label]]</code>
+            {" "}— it renders as a colored numbered badge matching the map.
           </p>
         </div>
       </section>

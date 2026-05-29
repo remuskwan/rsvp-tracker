@@ -7,6 +7,7 @@ import { Calendar, MapPin, Shirt, ParkingCircle, Hotel, Gem, Utensils } from "lu
 import { CountdownTimer } from "@/components/countdown-timer";
 import { FaqCarousel } from "@/components/faq-carousel";
 import { VenueMapLoader } from "@/components/venue-map-loader";
+import { HowToGetThereText, type PinRef } from "@/components/how-to-get-there";
 import type { MapPin as MapPinData } from "@/components/map-embed";
 
 interface Section {
@@ -216,9 +217,19 @@ export default async function Home() {
               />
             )}
             {wedding?.how_to_get_there && (
-              <p className="text-warm-600 whitespace-pre-line text-sm leading-relaxed">
-                {wedding.how_to_get_there}
-              </p>
+              <HowToGetThereText
+                text={wedding.how_to_get_there}
+                pins={[
+                  ...(wedding.venue_name
+                    ? [{ label: wedding.venue_name, type: "venue", number: 1 } satisfies PinRef]
+                    : []),
+                  ...(wedding.map_pins ?? []).map((p, i) => ({
+                    label: p.label,
+                    type: p.type,
+                    number: i + 2,
+                  } satisfies PinRef)),
+                ]}
+              />
             )}
           </section>
         )}
