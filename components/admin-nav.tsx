@@ -27,8 +27,8 @@ export function AdminNav() {
             className={cn(
               "flex items-center gap-2 rounded-lg px-2.5 h-8 text-sm font-medium transition-colors cursor-pointer",
               active
-                ? "bg-stone-200 text-stone-900"
-                : "text-stone-600 hover:bg-stone-200/60 hover:text-stone-900"
+                ? "bg-stone-200 dark:bg-stone-700 text-stone-900 dark:text-stone-100"
+                : "text-stone-600 dark:text-stone-300 hover:bg-stone-200/60 dark:hover:bg-stone-700/60 hover:text-stone-900 dark:hover:text-stone-100"
             )}
           >
             <Icon className="h-4 w-4 shrink-0" />
@@ -39,7 +39,7 @@ export function AdminNav() {
       <Separator className="my-2" />
       <Link
         href="/"
-        className="flex items-center gap-2 rounded-lg px-2.5 h-8 text-sm font-medium text-stone-500 hover:bg-stone-200/60 hover:text-stone-900 transition-colors cursor-pointer"
+        className="flex items-center gap-2 rounded-lg px-2.5 h-8 text-sm font-medium text-stone-500 dark:text-stone-400 hover:bg-stone-200/60 dark:hover:bg-stone-700/60 hover:text-stone-900 dark:hover:text-stone-100 transition-colors cursor-pointer"
       >
         <ExternalLink className="h-4 w-4 shrink-0" />
         View Website

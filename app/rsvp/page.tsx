@@ -68,7 +68,7 @@ export default async function RsvpPage() {
             Edit your response →
           </Link>
         </p>
-        <div className="bg-white rounded-2xl shadow-sm border border-warm-200 p-6 md:p-8">
+        <div className="bg-card rounded-2xl shadow-sm border border-warm-200 p-6 md:p-8">
           <RsvpForm />
         </div>
       </div>
