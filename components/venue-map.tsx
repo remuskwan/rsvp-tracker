@@ -42,6 +42,7 @@ interface VenueMapProps {
   venueName: string;
   venueAddress?: string | null;
   venuePhotoUrl?: string | null;
+  mapsUrl?: string | null;
   mapPins?: MapPinData[];
 }
 
@@ -56,7 +57,7 @@ function PinMarker({ color, number, onClick }: { color: string; number: number; 
   );
 }
 
-export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, mapPins = [] }: VenueMapProps) {
+export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, mapsUrl, mapPins = [] }: VenueMapProps) {
   const [selected, setSelected] = useState<SelectedPin | null>(null);
   const [open, setOpen] = useState(false);
   const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? "";
@@ -98,12 +99,16 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
   const directionsUrl = selected
     ? `https://www.google.com/maps/dir/?api=1&destination=${selected.lat},${selected.lng}`
     : "";
-  // Prefer the admin-supplied Google Maps URL so the link opens the real place
+  // Prefer an admin-supplied Google Maps URL so the link opens the real place
   // page (name, photos, reviews) instead of dropping a generic pin at lat/lng.
+  // Per-pin URL (any pin) wins; the venue pin falls back to wedding_info.maps_url;
+  // otherwise we land on a lat/lng search.
   const viewOnMapsUrl = selected
     ? selected.maps_url
       ? selected.maps_url
-      : `https://www.google.com/maps/search/?api=1&query=${selected.lat},${selected.lng}`
+      : selected.type === "venue" && mapsUrl
+        ? mapsUrl
+        : `https://www.google.com/maps/search/?api=1&query=${selected.lat},${selected.lng}`
     : "";
 
   return (
@@ -134,7 +139,7 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
           {selected && (
             <>
               {selected.photo_url && (
-                <div className="relative aspect-video max-h-44 bg-warm-50 shrink-0">
+                <div className="relative h-44 bg-warm-50 shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={selected.photo_url} alt={selected.label} className="w-full h-full object-cover" />
                 </div>
