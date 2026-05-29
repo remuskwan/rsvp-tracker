@@ -95,8 +95,15 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
     ];
   }, [lat, lng]);
 
+  // For the venue, prefer the address as the destination so Google routes to the
+  // building entrance (more accurate for large venues than the centroid lat/lng).
+  // Other pins keep lat/lng since their `address` field is freeform description.
   const directionsUrl = selected
-    ? `https://www.google.com/maps/dir/?api=1&destination=${selected.lat},${selected.lng}`
+    ? `https://www.google.com/maps/dir/?api=1&destination=${
+        selected.type === "venue" && selected.address
+          ? encodeURIComponent(selected.address)
+          : `${selected.lat},${selected.lng}`
+      }`
     : "";
   // Prefer the admin-supplied Google Maps URL for the venue pin so it opens the
   // real place page (with name, photos, reviews) instead of dropping a generic
