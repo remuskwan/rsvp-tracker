@@ -44,6 +44,7 @@ export const weddingInfoSchema = z.object({
     lng: z.number(),
     description: z.string().optional().nullable(),
     photo_url: z.string().optional().nullable(),
+    maps_url: z.string().url().optional().nullable(),
   })).default([]),
   rsvp_deadline: z.string().optional().nullable(),
   venue_lat: z.number().optional().nullable(),

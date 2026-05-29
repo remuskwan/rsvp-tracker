@@ -12,6 +12,7 @@ export interface MapPin {
   lng: number;
   description?: string | null;
   photo_url?: string | null;
+  maps_url?: string | null;
 }
 
 const PIN_COLORS: Record<PinType, string> = {
