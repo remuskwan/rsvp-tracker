@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Map, { Marker, NavigationControl } from "react-map-gl/mapbox";
 import { ExternalLink, Navigation, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes";
 import type { MapPin as MapPinData, PinType } from "@/components/map-embed";
 
 const PIN_COLORS: Record<PinType, string> = {
@@ -61,6 +62,10 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
   const [selected, setSelected] = useState<SelectedPin | null>(null);
   const [open, setOpen] = useState(false);
   const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? "";
+  const { resolvedTheme } = useTheme();
+  const mapStyle = resolvedTheme === "dark"
+    ? "mapbox://styles/mapbox/dark-v11"
+    : "mapbox://styles/mapbox/light-v11";
 
   const handleSelect = (pin: SelectedPin) => {
     setSelected(pin);
@@ -127,7 +132,7 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
           maxBounds={maxBounds}
           minZoom={11}
           style={{ width: "100%", height: "100%" }}
-          mapStyle="mapbox://styles/mapbox/light-v11"
+          mapStyle={mapStyle}
         >
           <NavigationControl position="top-right" showCompass={false} />
           {allPins.map((pin, i) => (
@@ -140,7 +145,7 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
 
         {/* Slide-in side panel */}
         <div
-          className={`absolute inset-y-0 left-0 w-full sm:w-80 bg-white border-r border-warm-100 shadow-lg transform transition-transform duration-300 ease-out flex flex-col ${open ? "translate-x-0" : "-translate-x-full pointer-events-none"}`}
+          className={`absolute inset-y-0 left-0 w-full sm:w-80 bg-card border-r border-warm-200 shadow-lg transform transition-transform duration-300 ease-out flex flex-col ${open ? "translate-x-0" : "-translate-x-full pointer-events-none"}`}
           aria-hidden={!open}
         >
           {selected && (

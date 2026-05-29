@@ -33,7 +33,7 @@ export function FaqCarousel({ items }: { items: FaqItem[] }) {
           <div key={i}>
             <button
               onClick={() => setOpen(isOpen ? null : i)}
-              className="w-full flex items-center gap-4 px-5 py-4 text-left bg-white hover:bg-warm-50 transition-colors"
+              className="w-full flex items-center gap-4 px-5 py-4 text-left bg-card hover:bg-warm-50 transition-colors"
               aria-expanded={isOpen}
             >
               <div className="flex items-center justify-center w-9 h-9 rounded-full bg-warm-100 shrink-0">
@@ -53,7 +53,7 @@ export function FaqCarousel({ items }: { items: FaqItem[] }) {
             </button>
 
             {isOpen && (
-              <div className="bg-white px-5 pb-4">
+              <div className="bg-card px-5 pb-4">
                 <div className="flex gap-4">
                   <div className="w-9 shrink-0" />
                   <p className="text-sm text-warm-600 leading-relaxed whitespace-pre-line">
