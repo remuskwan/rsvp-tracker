@@ -10,6 +10,7 @@ export interface MapPin {
   type: PinType;
   lat: number;
   lng: number;
+  address?: string | null;
   description?: string | null;
   photo_url?: string | null;
   maps_url?: string | null;

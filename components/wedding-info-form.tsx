@@ -35,6 +35,7 @@ interface MapPinEntry {
   type: PinType;
   lat: string;
   lng: string;
+  address: string;
   description: string;
   photo_url: string;
   maps_url: string;
@@ -69,7 +70,7 @@ interface WeddingInfoData {
   parking_info: string | null;
   accommodations: string | null;
   maps_url: string | null;
-  map_pins: { label: string; type: PinType; lat: number; lng: number; description?: string | null; photo_url?: string | null; maps_url?: string | null }[];
+  map_pins: { label: string; type: PinType; lat: number; lng: number; address?: string | null; description?: string | null; photo_url?: string | null; maps_url?: string | null }[];
   how_to_get_there: string | null;
   venue_photo_url: string | null;
   sections: Section[];
@@ -99,6 +100,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
       type: p.type,
       lat: String(p.lat),
       lng: String(p.lng),
+      address: p.address ?? "",
       description: p.description ?? "",
       photo_url: p.photo_url ?? "",
       maps_url: p.maps_url ?? "",
@@ -112,7 +114,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
     setMapPins((prev) => prev.map((p, i) => (i === index ? { ...p, [field]: value } : p)));
 
   const addPin = () =>
-    setMapPins((prev) => [...prev, { label: "", type: "other", lat: "", lng: "", description: "", photo_url: "", maps_url: "" }]);
+    setMapPins((prev) => [...prev, { label: "", type: "other", lat: "", lng: "", address: "", description: "", photo_url: "", maps_url: "" }]);
 
   const removePin = (index: number) =>
     setMapPins((prev) => prev.filter((_, i) => i !== index));
@@ -163,6 +165,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
             type: p.type,
             lat: parseFloat(p.lat),
             lng: parseFloat(p.lng),
+            address: p.address || null,
             description: p.description || null,
             photo_url: p.photo_url || null,
             maps_url: p.maps_url || null,
@@ -395,13 +398,12 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
               <div className="space-y-1">
                 <Label>Location</Label>
                 <PinLocationSearch
-                  lat={pin.lat}
-                  lng={pin.lng}
-                  onSelect={(lat, lng, suggestedLabel) => {
+                  address={pin.address}
+                  onSelect={(lat, lng, suggestedLabel, address) => {
                     setMapPins((prev) =>
                       prev.map((p, idx) =>
                         idx === i
-                          ? { ...p, lat, lng, label: p.label || suggestedLabel }
+                          ? { ...p, lat, lng, address, label: p.label || suggestedLabel }
                           : p
                       )
                     );
