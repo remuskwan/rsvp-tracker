@@ -49,12 +49,12 @@ export function CountdownTimer({ targetDate }: { targetDate: string }) {
         {UNITS.map(({ label }) => (
           <div
             key={label}
-            className="bg-white/60 dark:bg-warm-100/40 backdrop-blur-sm border border-stone-200 dark:border-warm-200/40 rounded-lg px-4 py-3 min-w-[64px] text-center"
+            className="bg-white/60 dark:bg-warm-900/15 backdrop-blur-sm border border-stone-200 dark:border-warm-700/40 rounded-lg px-4 py-3 min-w-[64px] text-center"
           >
-            <p className="text-3xl sm:text-4xl text-stone-800 dark:text-warm-800" style={{ fontFamily: "var(--font-playfair)" }}>
+            <p className="text-3xl sm:text-4xl text-stone-800 dark:text-warm-900" style={{ fontFamily: "var(--font-playfair)" }}>
               --
             </p>
-            <p className="text-xs uppercase tracking-widest text-stone-500 dark:text-warm-500 mt-1">{label}</p>
+            <p className="text-xs uppercase tracking-widest text-stone-500 dark:text-warm-700 mt-1">{label}</p>
           </div>
         ))}
       </div>
@@ -76,10 +76,10 @@ export function CountdownTimer({ targetDate }: { targetDate: string }) {
           key={label}
           className="bg-white/60 dark:bg-warm-100/40 backdrop-blur-sm border border-stone-200 dark:border-warm-200/40 rounded-lg px-4 py-3 min-w-[64px] text-center"
         >
-          <p className="text-3xl sm:text-4xl text-stone-800" style={{ fontFamily: "var(--font-playfair)" }}>
+          <p className="text-3xl sm:text-4xl text-stone-800 dark:text-warm-900" style={{ fontFamily: "var(--font-playfair)" }}>
             {String(timeLeft[key]).padStart(2, "0")}
           </p>
-          <p className="text-xs uppercase tracking-widest text-stone-500 mt-1">{label}</p>
+          <p className="text-xs uppercase tracking-widest text-stone-500 dark:text-warm-700 mt-1">{label}</p>
         </div>
       ))}
     </div>
