@@ -1,13 +1,11 @@
 import { requireAdmin } from "@/lib/supabase/admin-guard";
 import { QrCodeDisplay } from "@/components/qr-code-display";
-import { getSiteUrl, QR_REDIRECT_PATH, RSVP_PATH } from "@/lib/site-url";
+import { getSiteUrl } from "@/lib/site-url";
 
 export default async function QrPage() {
   await requireAdmin();
 
   const { baseUrl, source, isLocal } = await getSiteUrl();
-  const qrUrl = `${baseUrl}${QR_REDIRECT_PATH}`;
-  const destinationUrl = `${baseUrl}${RSVP_PATH}`;
 
   return (
     <div className="p-4 md:p-8">
@@ -16,15 +14,10 @@ export default async function QrPage() {
           QR Code
         </h1>
         <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
-          Print this on your invitations. Scanning it opens your RSVP form.
+          Print this on your invitations. Scanning it opens the wedding page.
         </p>
       </div>
-      <QrCodeDisplay
-        url={qrUrl}
-        destinationUrl={destinationUrl}
-        source={source}
-        isLocal={isLocal}
-      />
+      <QrCodeDisplay url={baseUrl} source={source} isLocal={isLocal} />
     </div>
   );
 }

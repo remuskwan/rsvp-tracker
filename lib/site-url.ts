@@ -1,8 +1,5 @@
 import { headers } from "next/headers";
 
-export const RSVP_PATH = "/rsvp";
-export const QR_REDIRECT_PATH = "/r";
-
 export type SiteUrlSource =
   | "env"
   | "vercel"
