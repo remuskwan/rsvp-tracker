@@ -3,11 +3,10 @@
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { AlertTriangle, ArrowRight, Download, ExternalLink, Link } from "lucide-react";
+import { AlertTriangle, Download, ExternalLink, Link } from "lucide-react";
 
 type Props = {
   url: string;
-  destinationUrl: string;
   source: "env" | "vercel" | "request-header" | "fallback";
   isLocal: boolean;
 };
@@ -19,7 +18,7 @@ const SOURCE_LABEL: Record<Props["source"], string> = {
   fallback: "localhost fallback",
 };
 
-export function QrCodeDisplay({ url, destinationUrl, source, isLocal }: Props) {
+export function QrCodeDisplay({ url, source, isLocal }: Props) {
   const [pngDataUrl, setPngDataUrl] = useState<string>("");
   const [svgString, setSvgString] = useState<string>("");
 
@@ -90,12 +89,6 @@ export function QrCodeDisplay({ url, destinationUrl, source, isLocal }: Props) {
             {url}
           </span>
         </div>
-        <div className="flex items-start gap-2 pl-6 text-xs text-stone-500 dark:text-stone-400">
-          <ArrowRight className="h-3 w-3 shrink-0 mt-0.5" />
-          <span className="break-all">
-            Redirects to <span className="font-mono">{destinationUrl}</span>
-          </span>
-        </div>
         <p className="text-xs text-stone-400 pl-6">
           Base URL resolved from {SOURCE_LABEL[source]}.
         </p>
@@ -133,9 +126,7 @@ export function QrCodeDisplay({ url, destinationUrl, source, isLocal }: Props) {
 
       <p className="text-xs text-stone-400">
         SVG is recommended for printing — it scales to any size without losing
-        quality. The short <span className="font-mono">/r</span> link forwards
-        to the live RSVP page, so renaming routes later won&apos;t break printed
-        invitations.
+        quality.
       </p>
     </div>
   );
