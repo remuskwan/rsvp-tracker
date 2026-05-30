@@ -9,8 +9,15 @@ interface TimeLeft {
   seconds: number;
 }
 
+function toUtc8Date(dateStr: string): Date {
+  // Append UTC+8 offset if no timezone info present, so the countdown
+  // always targets the correct local (Singapore/KL/HK) time.
+  const hasTimezone = /[Zz]$/.test(dateStr) || /[+-]\d{2}:?\d{2}$/.test(dateStr);
+  return new Date(hasTimezone ? dateStr : dateStr + "+08:00");
+}
+
 function computeTimeLeft(targetDate: string): TimeLeft | null {
-  const diff = new Date(targetDate).getTime() - Date.now();
+  const diff = toUtc8Date(targetDate).getTime() - Date.now();
   if (diff <= 0) return null;
   return {
     days: Math.floor(diff / (1000 * 60 * 60 * 24)),
