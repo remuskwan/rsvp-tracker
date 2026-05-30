@@ -2,22 +2,34 @@
 
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
-import { Button } from "@/components/ui/button";
-import { Download, Link } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { AlertTriangle, ArrowRight, Download, ExternalLink, Link } from "lucide-react";
 
-export function QrCodeDisplay({ url }: { url: string }) {
+type Props = {
+  url: string;
+  destinationUrl: string;
+  source: "env" | "vercel" | "request-header" | "fallback";
+  isLocal: boolean;
+};
+
+const SOURCE_LABEL: Record<Props["source"], string> = {
+  env: "NEXT_PUBLIC_SITE_URL",
+  vercel: "Vercel project URL",
+  "request-header": "request host",
+  fallback: "localhost fallback",
+};
+
+export function QrCodeDisplay({ url, destinationUrl, source, isLocal }: Props) {
   const [pngDataUrl, setPngDataUrl] = useState<string>("");
   const [svgString, setSvgString] = useState<string>("");
 
   useEffect(() => {
-    // Generate PNG
     QRCode.toDataURL(url, {
       errorCorrectionLevel: "H",
       width: 600,
       margin: 2,
     }).then(setPngDataUrl);
 
-    // Generate SVG
     QRCode.toString(url, {
       type: "svg",
       errorCorrectionLevel: "H",
@@ -43,7 +55,20 @@ export function QrCodeDisplay({ url }: { url: string }) {
 
   return (
     <div className="space-y-6 max-w-sm">
-      {/* QR Preview */}
+      {isLocal && (
+        <div className="flex gap-2 rounded-lg border border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/40 p-3 text-amber-900 dark:text-amber-100">
+          <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
+          <div className="text-xs">
+            <p className="font-medium">This QR points at a local URL.</p>
+            <p className="mt-1">
+              Set <code className="font-mono">NEXT_PUBLIC_SITE_URL</code> to your
+              public domain before printing — scanned codes won&apos;t resolve on
+              guest devices.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="border border-stone-200 dark:border-stone-700 rounded-2xl p-6 bg-white dark:bg-stone-800 text-center">
         {pngDataUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -54,19 +79,29 @@ export function QrCodeDisplay({ url }: { url: string }) {
             style={{ imageRendering: "pixelated", width: 280, height: 280 }}
           />
         ) : (
-          <div className="w-[280px] h-[280px] mx-auto bg-stone-100 rounded animate-pulse" />
+          <div className="w-[280px] h-[280px] mx-auto bg-stone-100 dark:bg-stone-700 rounded animate-pulse" />
         )}
-        <p className="text-xs text-stone-400 mt-3 break-all">{url}</p>
       </div>
 
-      {/* URL copy */}
-      <div className="flex items-center gap-2">
-        <Link className="h-4 w-4 text-stone-400 shrink-0" />
-        <span className="text-sm text-stone-600 break-all">{url}</span>
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Link className="h-4 w-4 text-stone-400 shrink-0" />
+          <span className="text-sm text-stone-600 dark:text-stone-300 break-all font-mono">
+            {url}
+          </span>
+        </div>
+        <div className="flex items-start gap-2 pl-6 text-xs text-stone-500 dark:text-stone-400">
+          <ArrowRight className="h-3 w-3 shrink-0 mt-0.5" />
+          <span className="break-all">
+            Redirects to <span className="font-mono">{destinationUrl}</span>
+          </span>
+        </div>
+        <p className="text-xs text-stone-400 pl-6">
+          Base URL resolved from {SOURCE_LABEL[source]}.
+        </p>
       </div>
 
-      {/* Downloads */}
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         <Button
           onClick={downloadSvg}
           disabled={!svgString}
@@ -85,11 +120,22 @@ export function QrCodeDisplay({ url }: { url: string }) {
           <Download className="h-4 w-4" />
           Download PNG
         </Button>
+        <a
+          href={url}
+          target="_blank"
+          rel="noreferrer noopener"
+          className={buttonVariants({ variant: "outline", className: "gap-2" })}
+        >
+          <ExternalLink className="h-4 w-4" />
+          Test link
+        </a>
       </div>
 
       <p className="text-xs text-stone-400">
         SVG is recommended for printing — it scales to any size without losing
-        quality.
+        quality. The short <span className="font-mono">/r</span> link forwards
+        to the live RSVP page, so renaming routes later won&apos;t break printed
+        invitations.
       </p>
     </div>
   );
