@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import Map, { Marker, NavigationControl } from "react-map-gl/mapbox";
-import { ExternalLink, Navigation, X } from "lucide-react";
+import type { MapRef } from "react-map-gl/mapbox";
+import { ExternalLink, LocateFixed, Navigation, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import type { MapPin as MapPinData, PinType } from "@/components/map-embed";
@@ -61,7 +62,12 @@ function PinMarker({ color, number, onClick }: { color: string; number: number; 
 export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, mapsUrl, mapPins = [] }: VenueMapProps) {
   const [selected, setSelected] = useState<SelectedPin | null>(null);
   const [open, setOpen] = useState(false);
+  const mapRef = useRef<MapRef>(null);
   const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? "";
+
+  const centerToVenue = () => {
+    mapRef.current?.flyTo({ center: [lng, lat], zoom: 15, duration: 900 });
+  };
   const { resolvedTheme } = useTheme();
   const mapStyle = resolvedTheme === "dark"
     ? "mapbox://styles/mapbox/dark-v11"
@@ -127,6 +133,7 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
     <div className="rounded-xl overflow-hidden border border-warm-200 shadow-sm">
       <div className="relative" style={{ height: 420 }}>
         <Map
+          ref={mapRef}
           mapboxAccessToken={token}
           initialViewState={initialViewState}
           maxBounds={maxBounds}
@@ -142,6 +149,16 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
             </Marker>
           ))}
         </Map>
+
+        {/* Center-to-venue button */}
+        <button
+          onClick={centerToVenue}
+          title="Center to venue"
+          aria-label="Center map to venue"
+          className="absolute bottom-8 right-2.5 z-10 flex items-center justify-center w-8 h-8 rounded bg-white shadow-md border border-gray-200 text-gray-700 hover:bg-gray-50 active:bg-gray-100 transition-colors"
+        >
+          <LocateFixed className="h-4 w-4" />
+        </button>
 
         {/* Slide-in side panel */}
         <div
