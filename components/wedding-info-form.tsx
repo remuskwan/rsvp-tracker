@@ -78,11 +78,17 @@ interface WeddingInfoData {
   rsvp_deadline: string | null;
 }
 
+function utcToUtc8Input(isoStr: string): string {
+  const d = new Date(isoStr);
+  const utc8 = new Date(d.getTime() + 8 * 60 * 60 * 1000);
+  return utc8.toISOString().slice(0, 16);
+}
+
 export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
   const [isPending, startTransition] = useTransition();
   const [coupleNames, setCoupleNames] = useState(initial.couple_names ?? "");
   const [eventDate, setEventDate] = useState(
-    initial.event_date ? initial.event_date.slice(0, 16) : ""
+    initial.event_date ? utcToUtc8Input(initial.event_date) : ""
   );
   const [venueName, setVenueName] = useState(initial.venue_name ?? "");
   const [venueAddress, setVenueAddress] = useState(initial.venue_address ?? "");
@@ -147,7 +153,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
     startTransition(async () => {
       const result = await updateWeddingInfo({
         couple_names: coupleNames,
-        event_date: eventDate || null,
+        event_date: eventDate ? new Date(eventDate + "+08:00").toISOString() : null,
         venue_name: venueName || null,
         venue_address: venueAddress || null,
         ceremony_time: ceremonyTime || null,
