@@ -36,6 +36,11 @@ interface ScheduleEntry {
   detail: string;
 }
 
+interface DressColor {
+  name: string;
+  color: string;
+}
+
 interface MapPinEntry {
   label: string;
   type: PinType;
@@ -72,9 +77,8 @@ interface WeddingInfoData {
   venue_address: string | null;
   schedule: ScheduleEntry[];
   dress_code: string | null;
-  parking_info: string | null;
-  accommodations: string | null;
-  maps_url: string | null;
+  dress_code_details: string | null;
+  dress_colors: DressColor[];
   map_pins: { label: string; type: PinType; lat: number; lng: number; address?: string | null; description?: string | null; photo_url?: string | null; maps_url?: string | null }[];
   how_to_get_there: string | null;
   venue_photo_url: string | null;
@@ -99,9 +103,8 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
   const [venueAddress, setVenueAddress] = useState(initial.venue_address ?? "");
   const [schedule, setSchedule] = useState<ScheduleEntry[]>(initial.schedule ?? []);
   const [dressCode, setDressCode] = useState(initial.dress_code ?? "");
-  const [parkingInfo, setParkingInfo] = useState(initial.parking_info ?? "");
-  const [accommodations, setAccommodations] = useState(initial.accommodations ?? "");
-  const [mapsUrl, setMapsUrl] = useState(initial.maps_url ?? "");
+  const [dressCodeDetails, setDressCodeDetails] = useState(initial.dress_code_details ?? "");
+  const [dressColors, setDressColors] = useState<DressColor[]>(initial.dress_colors ?? []);
   const [howToGetThere, setHowToGetThere] = useState(initial.how_to_get_there ?? "");
   const [venuePhotoUrl, setVenuePhotoUrl] = useState<string | null>(initial.venue_photo_url ?? null);
   const [mapPins, setMapPins] = useState<MapPinEntry[]>(
@@ -130,6 +133,15 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
 
   const removePin = (index: number) =>
     setMapPins((prev) => prev.filter((_, i) => i !== index));
+
+  const updateDressColor = (index: number, field: keyof DressColor, value: string) =>
+    setDressColors((prev) => prev.map((c, i) => (i === index ? { ...c, [field]: value } : c)));
+
+  const addDressColor = () =>
+    setDressColors((prev) => [...prev, { name: "", color: "#cccccc" }]);
+
+  const removeDressColor = (index: number) =>
+    setDressColors((prev) => prev.filter((_, i) => i !== index));
 
   const updateFaq = (index: number, field: "question" | "answer", value: string) => {
     setFaqs((prev) =>
@@ -206,9 +218,10 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
           }))
           .filter((s) => s.time || s.title),
         dress_code: dressCode || null,
-        parking_info: parkingInfo || null,
-        accommodations: accommodations || null,
-        maps_url: mapsUrl || null,
+        dress_code_details: dressCodeDetails || null,
+        dress_colors: dressColors
+          .map((c) => ({ name: c.name.trim(), color: c.color.trim() }))
+          .filter((c) => c.color),
         how_to_get_there: howToGetThere || null,
         venue_photo_url: venuePhotoUrl || null,
         map_pins: mapPins
@@ -404,9 +417,9 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
         </Button>
       </section>
 
-      {/* Logistics */}
+      {/* Dress Code */}
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-stone-700">Logistics</h2>
+        <h2 className="text-lg font-semibold text-stone-700">Dress Code</h2>
         <Separator />
         <div className="space-y-1">
           <Label htmlFor="dress_code">Dress Code</Label>
@@ -416,36 +429,64 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
             onChange={(e) => setDressCode(e.target.value)}
             placeholder="Smart casual, cocktail attire, etc."
           />
+          <p className="text-xs text-stone-400">
+            Shown as the heading of the &ldquo;What to Wear&rdquo; section.
+          </p>
         </div>
         <div className="space-y-1">
-          <Label htmlFor="parking_info">Parking Information</Label>
+          <Label htmlFor="dress_code_details">Additional Details</Label>
           <Textarea
-            id="parking_info"
-            value={parkingInfo}
-            onChange={(e) => setParkingInfo(e.target.value)}
-            placeholder="Free parking available at the venue basement…"
+            id="dress_code_details"
+            value={dressCodeDetails}
+            onChange={(e) => setDressCodeDetails(e.target.value)}
+            placeholder="We'd love for guests to lean into earthy tones — think garden-party elegant…"
             rows={3}
           />
+          <p className="text-xs text-stone-400">
+            Optional paragraph shown under the heading. Line breaks are preserved.
+          </p>
         </div>
-        <div className="space-y-1">
-          <Label htmlFor="accommodations">Accommodations</Label>
-          <Textarea
-            id="accommodations"
-            value={accommodations}
-            onChange={(e) => setAccommodations(e.target.value)}
-            placeholder="Room block at Grand Ballroom Hotel — use code WEDDING for 15% off…"
-            rows={3}
-          />
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor="maps_url">Google Maps Link</Label>
-          <Input
-            id="maps_url"
-            type="url"
-            value={mapsUrl}
-            onChange={(e) => setMapsUrl(e.target.value)}
-            placeholder="https://maps.app.goo.gl/…"
-          />
+        <div className="space-y-2">
+          <Label>Suggested Colors</Label>
+          {dressColors.map((c, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <input
+                type="color"
+                value={c.color}
+                onChange={(e) => updateDressColor(i, "color", e.target.value)}
+                className="h-9 w-12 shrink-0 cursor-pointer rounded border border-stone-200 bg-white p-0.5"
+                aria-label="Swatch color"
+              />
+              <Input
+                value={c.name}
+                onChange={(e) => updateDressColor(i, "name", e.target.value)}
+                placeholder="Color name (e.g. Sage)"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => removeDressColor(i)}
+                aria-label="Remove color"
+                className="shrink-0 text-stone-400 hover:text-red-600"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={addDressColor}
+            className="w-full border-dashed"
+          >
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Add color
+          </Button>
+          <p className="text-xs text-stone-400">
+            Swatches shown as a palette under the dress code. Leave empty to hide them.
+          </p>
         </div>
       </section>
 
