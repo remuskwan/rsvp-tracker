@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/scripts/auto-worktree.sh",
+            "timeout": 30,
+            "statusMessage": "Creating worktree…"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/scripts/auto-pr.sh",
+            "timeout": 120,
+            "statusMessage": "Rebasing on main & creating PR…"
+          }
+        ]
+      }
+    ]
+  }
+}
