@@ -20,6 +20,8 @@ interface WeddingInfo {
   reception_time: string | null;
   schedule: { time: string; title: string; detail: string }[] | null;
   dress_code: string | null;
+  dress_code_details: string | null;
+  dress_colors: { name: string; color: string }[] | null;
   parking_info: string | null;
   accommodations: string | null;
   sections: Section[];
@@ -35,11 +37,12 @@ interface WeddingInfo {
 
 export const revalidate = 60; // revalidate every minute
 
-const DRESS_SWATCHES = [
-  { name: "Sage", color: "#9caa86", border: false },
-  { name: "Blush", color: "#e7cfc4", border: false },
-  { name: "Stone", color: "#d8cead", border: false },
-  { name: "Forest", color: "#3a5240", border: true },
+// Fallback palette used when no colors have been set in the admin panel.
+const DEFAULT_DRESS_SWATCHES = [
+  { name: "Sage", color: "#9caa86" },
+  { name: "Blush", color: "#e7cfc4" },
+  { name: "Stone", color: "#d8cead" },
+  { name: "Forest", color: "#3a5240" },
 ];
 
 export default async function Home() {
@@ -326,24 +329,29 @@ export default async function Home() {
             >
               {wedding.dress_code}
             </h2>
-            {wedding.accommodations && (
+            {(wedding.dress_code_details || wedding.accommodations) && (
               <p className="text-[17px] leading-[1.65] max-w-[540px] mx-auto mb-8 text-[#d8d3c2] whitespace-pre-line">
-                {wedding.accommodations}
+                {wedding.dress_code_details || wedding.accommodations}
               </p>
             )}
             <div className="flex justify-center gap-4 sm:gap-[18px]">
-              {DRESS_SWATCHES.map((s) => (
-                <div key={s.name} className="text-center">
+              {(wedding.dress_colors && wedding.dress_colors.length > 0
+                ? wedding.dress_colors
+                : DEFAULT_DRESS_SWATCHES
+              ).map((s, i) => (
+                <div key={`${s.name}-${i}`} className="text-center">
                   <div
                     className="w-[46px] h-[46px] rounded-full mx-auto mb-2"
                     style={{
                       background: s.color,
-                      border: s.border ? "1px solid #5a6e54" : undefined,
+                      border: "1px solid #5a6e54",
                     }}
                   />
-                  <div className="text-[11px] tracking-[0.12em] uppercase text-[#a9b29c]">
-                    {s.name}
-                  </div>
+                  {s.name && (
+                    <div className="text-[11px] tracking-[0.12em] uppercase text-[#a9b29c]">
+                      {s.name}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
