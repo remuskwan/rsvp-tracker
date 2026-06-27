@@ -18,6 +18,7 @@ interface WeddingInfo {
   venue_address: string | null;
   ceremony_time: string | null;
   reception_time: string | null;
+  schedule: { time: string; title: string; detail: string }[] | null;
   dress_code: string | null;
   parking_info: string | null;
   accommodations: string | null;
@@ -77,19 +78,23 @@ export default async function Home() {
   const [firstName, secondName] =
     names.length === 2 ? names : [names.join(" "), null];
 
-  // Schedule rows derived from the available ceremony / reception times.
-  const scheduleRows = [
-    wedding?.ceremony_time && {
-      time: wedding.ceremony_time,
-      title: "Ceremony",
-      detail: wedding.venue_name ?? "Among the blooms",
-    },
-    wedding?.reception_time && {
-      time: wedding.reception_time,
-      title: "Reception",
-      detail: "A seated feast to follow",
-    },
-  ].filter(Boolean) as { time: string; title: string; detail: string }[];
+  // Schedule rows come from the editable "Order of the Day" list. Fall back to
+  // the legacy ceremony / reception time fields when no schedule is set.
+  const scheduleRows =
+    wedding?.schedule && wedding.schedule.length > 0
+      ? wedding.schedule
+      : ([
+          wedding?.ceremony_time && {
+            time: wedding.ceremony_time,
+            title: "Ceremony",
+            detail: wedding.venue_name ?? "Among the blooms",
+          },
+          wedding?.reception_time && {
+            time: wedding.reception_time,
+            title: "Reception",
+            detail: "A seated feast to follow",
+          },
+        ].filter(Boolean) as { time: string; title: string; detail: string }[]);
 
   const navItems = [
     scheduleRows.length > 0 && { label: "Schedule", href: "#schedule" },
@@ -238,7 +243,9 @@ export default async function Home() {
                       <div className="text-lg sm:text-[19px] text-warm-800">
                         {row.title}
                       </div>
-                      <div className="text-warm-500 text-[15px]">{row.detail}</div>
+                      {row.detail && (
+                        <div className="text-warm-500 text-[15px]">{row.detail}</div>
+                      )}
                     </div>
                   </div>
                 );

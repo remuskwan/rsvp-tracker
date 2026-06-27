@@ -14,6 +14,18 @@ export default async function WeddingInfoPage() {
     .eq("id", 1)
     .single();
 
+  // Seed the schedule editor from the new column, falling back to the legacy
+  // ceremony/reception time fields so existing data migrates in on first load.
+  const legacySchedule = [
+    info?.ceremony_time && { time: info.ceremony_time, title: "Ceremony", detail: "" },
+    info?.reception_time && { time: info.reception_time, title: "Reception", detail: "" },
+  ].filter(Boolean) as { time: string; title: string; detail: string }[];
+
+  const schedule =
+    Array.isArray(info?.schedule) && info.schedule.length > 0
+      ? info.schedule
+      : legacySchedule;
+
   return (
     <div className="p-4 md:p-8">
       <div className="mb-8">
@@ -30,8 +42,7 @@ export default async function WeddingInfoPage() {
           event_date: info?.event_date ?? null,
           venue_name: info?.venue_name ?? null,
           venue_address: info?.venue_address ?? null,
-          ceremony_time: info?.ceremony_time ?? null,
-          reception_time: info?.reception_time ?? null,
+          schedule,
           dress_code: info?.dress_code ?? null,
           parking_info: info?.parking_info ?? null,
           accommodations: info?.accommodations ?? null,

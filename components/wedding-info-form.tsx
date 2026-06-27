@@ -30,6 +30,12 @@ interface FaqEntry {
   answer: string;
 }
 
+interface ScheduleEntry {
+  time: string;
+  title: string;
+  detail: string;
+}
+
 interface MapPinEntry {
   label: string;
   type: PinType;
@@ -64,8 +70,7 @@ interface WeddingInfoData {
   event_date: string | null;
   venue_name: string | null;
   venue_address: string | null;
-  ceremony_time: string | null;
-  reception_time: string | null;
+  schedule: ScheduleEntry[];
   dress_code: string | null;
   parking_info: string | null;
   accommodations: string | null;
@@ -92,8 +97,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
   );
   const [venueName, setVenueName] = useState(initial.venue_name ?? "");
   const [venueAddress, setVenueAddress] = useState(initial.venue_address ?? "");
-  const [ceremonyTime, setCeremonyTime] = useState(initial.ceremony_time ?? "");
-  const [receptionTime, setReceptionTime] = useState(initial.reception_time ?? "");
+  const [schedule, setSchedule] = useState<ScheduleEntry[]>(initial.schedule ?? []);
   const [dressCode, setDressCode] = useState(initial.dress_code ?? "");
   const [parkingInfo, setParkingInfo] = useState(initial.parking_info ?? "");
   const [accommodations, setAccommodations] = useState(initial.accommodations ?? "");
@@ -148,6 +152,21 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
   const removeSection = (index: number) =>
     setSections((prev) => prev.filter((_, i) => i !== index));
 
+  const updateScheduleRow = (
+    index: number,
+    field: keyof ScheduleEntry,
+    value: string
+  ) =>
+    setSchedule((prev) =>
+      prev.map((s, i) => (i === index ? { ...s, [field]: value } : s))
+    );
+
+  const addScheduleRow = () =>
+    setSchedule((prev) => [...prev, { time: "", title: "", detail: "" }]);
+
+  const removeScheduleRow = (index: number) =>
+    setSchedule((prev) => prev.filter((_, i) => i !== index));
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     startTransition(async () => {
@@ -156,8 +175,13 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
         event_date: eventDate ? new Date(eventDate + "+08:00").toISOString() : null,
         venue_name: venueName || null,
         venue_address: venueAddress || null,
-        ceremony_time: ceremonyTime || null,
-        reception_time: receptionTime || null,
+        schedule: schedule
+          .map((s) => ({
+            time: s.time.trim(),
+            title: s.title.trim(),
+            detail: s.detail.trim(),
+          }))
+          .filter((s) => s.time || s.title),
         dress_code: dressCode || null,
         parking_info: parkingInfo || null,
         accommodations: accommodations || null,
@@ -259,26 +283,74 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
           <PinImageUpload url={venuePhotoUrl} onChange={setVenuePhotoUrl} />
           <p className="text-xs text-stone-400">Shown in the map card when guests tap the venue pin.</p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <Label htmlFor="ceremony_time">Ceremony Time</Label>
-            <Input
-              id="ceremony_time"
-              value={ceremonyTime}
-              onChange={(e) => setCeremonyTime(e.target.value)}
-              placeholder="2:00 PM"
-            />
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor="reception_time">Reception Time</Label>
-            <Input
-              id="reception_time"
-              value={receptionTime}
-              onChange={(e) => setReceptionTime(e.target.value)}
-              placeholder="7:00 PM"
-            />
-          </div>
+      </section>
+
+      {/* Order of the Day */}
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-stone-700">Order of the Day</h2>
+        <Separator />
+        <p className="text-sm text-stone-500">
+          Build the schedule shown in the “Order of the Day” section. Each row has
+          a time, a title, and an optional detail line. Rows appear in this order.
+        </p>
+        <div className="space-y-4">
+          {schedule.map((row, i) => (
+            <div
+              key={i}
+              className="border border-stone-200 rounded-lg p-4 space-y-3 bg-stone-50"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-stone-500">
+                  Item {i + 1}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeScheduleRow(i)}
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-3">
+                <div className="space-y-1">
+                  <Label>Time</Label>
+                  <Input
+                    value={row.time}
+                    onChange={(e) => updateScheduleRow(i, "time", e.target.value)}
+                    placeholder="2:00 PM"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label>Title</Label>
+                  <Input
+                    value={row.title}
+                    onChange={(e) => updateScheduleRow(i, "title", e.target.value)}
+                    placeholder="e.g. Ceremony"
+                  />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label>Detail <span className="text-stone-400 font-normal">(optional)</span></Label>
+                <Input
+                  value={row.detail}
+                  onChange={(e) => updateScheduleRow(i, "detail", e.target.value)}
+                  placeholder="e.g. A seated feast to follow"
+                />
+              </div>
+            </div>
+          ))}
         </div>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={addScheduleRow}
+          className="w-full border-dashed"
+        >
+          <PlusCircle className="h-4 w-4 mr-2" />
+          Add item
+        </Button>
       </section>
 
       {/* Logistics */}
