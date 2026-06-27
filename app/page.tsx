@@ -119,7 +119,7 @@ export default async function Home() {
         {/* ── Hero ──────────────────────────────────────── */}
         <header className="text-center px-6 sm:px-16 pt-16 sm:pt-20 pb-12 sm:pb-14">
           <p className="text-[13px] tracking-[0.34em] uppercase text-[var(--brass)] mb-6">
-            Together with their families
+            We&rsquo;re getting married
           </p>
           <h1
             className="font-medium leading-[0.98] text-warm-800 m-0 text-6xl sm:text-[96px]"
