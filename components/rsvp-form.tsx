@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { submitRsvp } from "@/app/actions/rsvp";
+import { GuestRow } from "@/components/guest-row";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -14,9 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GuestRow } from "@/components/guest-row";
-import { submitRsvp } from "@/app/actions/rsvp";
+import { Textarea } from "@/components/ui/textarea";
 import { PlusCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
 
 interface GuestEntry {
   name: string;
@@ -45,15 +45,17 @@ export function RsvpForm({ initial }: { initial?: InitialRsvpData }) {
   const [phone, setPhone] = useState(initial?.phone ?? "");
   const [side, setSide] = useState<string>(initial?.side ?? "");
   const [message, setMessage] = useState(initial?.message ?? "");
-  const [guests, setGuests] = useState<GuestEntry[]>(initial?.guests ?? [defaultGuest()]);
+  const [guests, setGuests] = useState<GuestEntry[]>(
+    initial?.guests ?? [defaultGuest()],
+  );
 
   const updateGuest = (
     index: number,
     field: "name" | "attending" | "dietary",
-    value: string | boolean
+    value: string | boolean,
   ) => {
     setGuests((prev) =>
-      prev.map((g, i) => (i === index ? { ...g, [field]: value } : g))
+      prev.map((g, i) => (i === index ? { ...g, [field]: value } : g)),
     );
   };
 
@@ -210,11 +212,7 @@ export function RsvpForm({ initial }: { initial?: InitialRsvpData }) {
         className="w-full text-sm uppercase tracking-[0.22em]"
         disabled={isPending}
       >
-        {isPending
-          ? "Sending…"
-          : initial
-            ? "Update our reply"
-            : "Send our reply"}
+        {isPending ? "Sending…" : initial ? "Update reply" : "Send reply"}
       </Button>
     </form>
   );
