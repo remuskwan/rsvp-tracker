@@ -145,9 +145,9 @@ export default async function Home() {
             className="text-xl sm:text-2xl tracking-[0.04em] text-[var(--forest)] m-0"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            From a thundering waterfall to a quiet garden, our next great
+            From thundering waterfalls to quiet gardens,
             <br />
-            adventure begins. Join us as we say &lsquo;I do&rsquo;.
+            our greatest adventure begins with &lsquo;I do&rsquo;.
           </p>
           {wedding?.event_date && (
             <p className="text-sm sm:text-base tracking-[0.22em] uppercase mt-5 text-warm-500">
