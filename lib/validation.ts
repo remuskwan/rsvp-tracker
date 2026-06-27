@@ -25,6 +25,11 @@ export const weddingInfoSchema = z.object({
   venue_address: z.string().optional().nullable(),
   ceremony_time: z.string().optional().nullable(),
   reception_time: z.string().optional().nullable(),
+  schedule: z.array(z.object({
+    time: z.string(),
+    title: z.string(),
+    detail: z.string().optional().default(''),
+  })).default([]),
   dress_code: z.string().optional().nullable(),
   parking_info: z.string().optional().nullable(),
   accommodations: z.string().optional().nullable(),
