@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { updateWeddingInfo } from "@/app/actions/admin";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { GripVertical, PlusCircle, Trash2 } from "lucide-react";
 import { PinLocationSearch } from "@/components/pin-location-search";
 import { PinImageUpload } from "@/components/pin-image-upload";
 import {
@@ -119,6 +119,8 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
   const [rsvpDeadline, setRsvpDeadline] = useState(initial.rsvp_deadline ?? "");
   const [sections, setSections] = useState<Section[]>(initial.sections ?? []);
   const [faqs, setFaqs] = useState<FaqEntry[]>(initial.faqs ?? []);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   const updatePin = (index: number, field: keyof MapPinEntry, value: string) =>
     setMapPins((prev) => prev.map((p, i) => (i === index ? { ...p, [field]: value } : p)));
@@ -166,6 +168,27 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
 
   const removeScheduleRow = (index: number) =>
     setSchedule((prev) => prev.filter((_, i) => i !== index));
+
+  const moveScheduleRow = (from: number, to: number) =>
+    setSchedule((prev) => {
+      if (
+        from === to ||
+        from < 0 ||
+        to < 0 ||
+        from >= prev.length ||
+        to >= prev.length
+      )
+        return prev;
+      const next = [...prev];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
+      return next;
+    });
+
+  const endScheduleDrag = () => {
+    setDragIndex(null);
+    setDragOverIndex(null);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -291,18 +314,46 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
         <Separator />
         <p className="text-sm text-stone-500">
           Build the schedule shown in the “Order of the Day” section. Each row has
-          a time, a title, and an optional detail line. Rows appear in this order.
+          a time, a title, and an optional detail line. Drag the handle to
+          reorder — rows appear on the public page in this order.
         </p>
         <div className="space-y-4">
           {schedule.map((row, i) => (
             <div
               key={i}
-              className="border border-stone-200 rounded-lg p-4 space-y-3 bg-stone-50"
+              onDragOver={(e) => {
+                e.preventDefault();
+                if (dragIndex !== null && dragOverIndex !== i) setDragOverIndex(i);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                if (dragIndex !== null) moveScheduleRow(dragIndex, i);
+                endScheduleDrag();
+              }}
+              className={`border rounded-lg p-4 space-y-3 bg-stone-50 transition-colors ${
+                dragIndex === i ? "opacity-50" : ""
+              } ${
+                dragOverIndex === i && dragIndex !== i
+                  ? "border-stone-400 ring-2 ring-stone-300"
+                  : "border-stone-200"
+              }`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-stone-500">
-                  Item {i + 1}
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    draggable
+                    onDragStart={() => setDragIndex(i)}
+                    onDragEnd={endScheduleDrag}
+                    aria-label={`Drag to reorder item ${i + 1}`}
+                    className="cursor-grab active:cursor-grabbing text-stone-400 hover:text-stone-600 touch-none"
+                  >
+                    <GripVertical className="h-4 w-4" />
+                  </button>
+                  <span className="text-xs font-medium text-stone-500">
+                    Item {i + 1}
+                  </span>
+                </div>
                 <Button
                   type="button"
                   variant="ghost"
