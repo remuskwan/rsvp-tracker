@@ -4,6 +4,7 @@ import { RsvpForm } from "@/components/rsvp-form";
 import { CountdownTimer } from "@/components/countdown-timer";
 import { VenueMapLoader } from "@/components/venue-map-loader";
 import { HowToGetThereText, type PinRef } from "@/components/how-to-get-there";
+import { SiteNav } from "@/components/site-nav";
 import type { MapPin as MapPinData } from "@/components/map-embed";
 
 interface Section {
@@ -109,38 +110,11 @@ export default async function Home() {
   const initials =
     names.length === 2 ? `${firstName[0]} & ${secondName?.[0] ?? ""}` : "♥";
 
-  const navSplit = Math.ceil(navItems.length / 2);
-
   return (
     <div className="min-h-screen bg-[#e7e5df] dark:bg-warm-50">
       <div className="max-w-[980px] mx-auto bg-warm-50 text-warm-800">
         {/* ── Nav ───────────────────────────────────────── */}
-        <nav className="flex items-center justify-center gap-5 sm:gap-9 py-6 px-4 text-[13px] tracking-[0.16em] uppercase text-[var(--forest)] border-b border-warm-200 flex-wrap">
-          {navItems.slice(0, navSplit).map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="hover:text-[var(--brass)] transition-colors"
-            >
-              {item.label}
-            </a>
-          ))}
-          <span
-            className="text-[21px] tracking-[0.32em] normal-case text-[var(--brass)]"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            {initials}
-          </span>
-          {navItems.slice(navSplit).map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="hover:text-[var(--brass)] transition-colors"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
+        <SiteNav navItems={navItems} initials={initials} />
 
         {/* ── Hero ──────────────────────────────────────── */}
         <header className="text-center px-6 sm:px-16 pt-16 sm:pt-20 pb-12 sm:pb-14">
