@@ -66,7 +66,7 @@ export function GuestRow({
                 name={`guest-attending-${index}`}
                 checked={attending === true}
                 onChange={() => onChange("attending", true)}
-                className="accent-terracotta-500"
+                className="accent-primary"
               />
               <span className="text-sm">Yes</span>
             </label>
@@ -76,7 +76,7 @@ export function GuestRow({
                 name={`guest-attending-${index}`}
                 checked={attending === false}
                 onChange={() => onChange("attending", false)}
-                className="accent-terracotta-500"
+                className="accent-primary"
               />
               <span className="text-sm">No</span>
             </label>

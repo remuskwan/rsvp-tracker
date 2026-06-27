@@ -21,7 +21,7 @@ export default async function SubmittedPage() {
         </div>
         <h1
           className="text-4xl text-warm-800 mb-4"
-          style={{ fontFamily: "var(--font-playfair)" }}
+          style={{ fontFamily: "var(--font-display)" }}
         >
           Thank You!
         </h1>

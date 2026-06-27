@@ -9,12 +9,8 @@ const VenueMap = dynamic(
 );
 
 interface Props {
-  lat: number;
-  lng: number;
-  venueName: string;
-  venueAddress?: string | null;
-  venuePhotoUrl?: string | null;
-  mapsUrl?: string | null;
+  lat?: number | null;
+  lng?: number | null;
   mapPins?: MapPinData[];
 }
 
