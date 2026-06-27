@@ -3,7 +3,7 @@
 import { useState, useMemo, useRef } from "react";
 import Map, { Marker, NavigationControl } from "react-map-gl/mapbox";
 import type { MapRef } from "react-map-gl/mapbox";
-import { ExternalLink, LocateFixed, Navigation, X } from "lucide-react";
+import { ExternalLink, LocateFixed, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import type { MapPin as MapPinData, PinType } from "@/components/map-embed";
@@ -130,9 +130,6 @@ export function VenueMap({ lat, lng, mapPins = [] }: VenueMapProps) {
     ];
   }, [center]);
 
-  const directionsUrl = selected
-    ? `https://www.google.com/maps/dir/?api=1&destination=${selected.lat},${selected.lng}`
-    : "";
   // Prefer an admin-supplied Google Maps URL so the link opens the real place
   // page (name, photos, reviews) instead of dropping a generic pin at lat/lng.
   const viewOnMapsUrl = selected
@@ -217,20 +214,11 @@ export function VenueMap({ lat, lng, mapPins = [] }: VenueMapProps) {
                     <X className="h-4 w-4" />
                   </button>
                 </div>
-                <a href={directionsUrl} target="_blank" rel="noopener noreferrer" className="block">
+                <a href={viewOnMapsUrl} target="_blank" rel="noopener noreferrer" className="block">
                   <Button size="sm" className="w-full gap-2 mt-2">
-                    <Navigation className="h-4 w-4" />
-                    Get Directions
+                    <ExternalLink className="h-4 w-4" />
+                    Open in Google Maps
                   </Button>
-                </a>
-                <a
-                  href={viewOnMapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs text-warm-500 hover:text-warm-700 mt-2"
-                >
-                  <ExternalLink className="h-3 w-3" />
-                  Open in Google Maps
                 </a>
               </div>
             </>
