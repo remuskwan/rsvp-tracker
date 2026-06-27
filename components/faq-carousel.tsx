@@ -41,7 +41,7 @@ export function FaqCarousel({ items }: { items: FaqItem[] }) {
               </div>
               <span
                 className="flex-1 text-warm-800 font-medium"
-                style={{ fontFamily: "var(--font-playfair)" }}
+                style={{ fontFamily: "var(--font-display)" }}
               >
                 {item.question}
               </span>

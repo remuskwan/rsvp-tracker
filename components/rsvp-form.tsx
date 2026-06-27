@@ -109,7 +109,7 @@ export function RsvpForm({ initial }: { initial?: InitialRsvpData }) {
       <section className="space-y-4">
         <h3
           className="text-lg text-warm-700"
-          style={{ fontFamily: "var(--font-playfair)" }}
+          style={{ fontFamily: "var(--font-display)" }}
         >
           Your Contact Details
         </h3>
@@ -142,7 +142,7 @@ export function RsvpForm({ initial }: { initial?: InitialRsvpData }) {
       <section className="space-y-4">
         <h3
           className="text-lg text-warm-700"
-          style={{ fontFamily: "var(--font-playfair)" }}
+          style={{ fontFamily: "var(--font-display)" }}
         >
           Who&apos;s Attending?
         </h3>
@@ -175,7 +175,7 @@ export function RsvpForm({ initial }: { initial?: InitialRsvpData }) {
       <section className="space-y-4">
         <h3
           className="text-lg text-warm-700"
-          style={{ fontFamily: "var(--font-playfair)" }}
+          style={{ fontFamily: "var(--font-display)" }}
         >
           A Little More
         </h3>
@@ -207,10 +207,14 @@ export function RsvpForm({ initial }: { initial?: InitialRsvpData }) {
       <Button
         type="submit"
         size="lg"
-        className="w-full rounded-full text-base"
+        className="w-full text-sm uppercase tracking-[0.22em]"
         disabled={isPending}
       >
-        {isPending ? "Sending…" : initial ? "Update my RSVP" : "Send My RSVP"}
+        {isPending
+          ? "Sending…"
+          : initial
+            ? "Update our reply"
+            : "Send our reply"}
       </Button>
     </form>
   );

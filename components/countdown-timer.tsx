@@ -20,12 +20,33 @@ function computeTimeLeft(targetDate: string): TimeLeft | null {
   };
 }
 
-const UNITS: { key: keyof TimeLeft; label: string }[] = [
-  { key: "days", label: "Days" },
-  { key: "hours", label: "Hours" },
-  { key: "minutes", label: "Minutes" },
-  { key: "seconds", label: "Seconds" },
-];
+function Unit({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="min-w-[68px] sm:min-w-[96px]">
+      <div
+        className="text-5xl sm:text-6xl leading-none text-warm-800"
+        style={{ fontFamily: "var(--font-display)" }}
+      >
+        {value}
+      </div>
+      <div className="text-[11px] sm:text-xs uppercase tracking-[0.22em] text-warm-500 mt-2.5">
+        {label}
+      </div>
+    </div>
+  );
+}
+
+function Colon() {
+  return (
+    <div
+      className="text-4xl sm:text-5xl leading-[1.1] text-warm-300 select-none"
+      style={{ fontFamily: "var(--font-display)" }}
+      aria-hidden
+    >
+      :
+    </div>
+  );
+}
 
 export function CountdownTimer({ targetDate }: { targetDate: string }) {
   const [mounted, setMounted] = useState(false);
@@ -43,45 +64,37 @@ export function CountdownTimer({ targetDate }: { targetDate: string }) {
     };
   }, [targetDate]);
 
-  if (!mounted) {
+  if (mounted && !timeLeft) {
     return (
-      <div className="flex justify-center gap-2 sm:gap-4 mt-6">
-        {UNITS.map(({ label }) => (
-          <div
-            key={label}
-            className="bg-white/60 dark:bg-warm-100/40 backdrop-blur-sm border border-stone-200 dark:border-warm-200/40 rounded-lg px-4 py-3 min-w-[64px] text-center"
-          >
-            <p className="text-3xl sm:text-4xl text-stone-800 dark:text-warm-800" style={{ fontFamily: "var(--font-playfair)" }}>
-              --
-            </p>
-            <p className="text-xs uppercase tracking-widest text-stone-500 dark:text-warm-500 mt-1">{label}</p>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  if (!timeLeft) {
-    return (
-      <p className="mt-6 text-xl text-stone-700" style={{ fontFamily: "var(--font-playfair)" }}>
+      <p
+        className="mt-2 text-3xl italic text-[var(--forest)]"
+        style={{ fontFamily: "var(--font-display)" }}
+      >
         We&apos;re married! ❤️
       </p>
     );
   }
 
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const t = mounted ? timeLeft : null;
+
   return (
-    <div className="flex justify-center gap-2 sm:gap-4 mt-6">
-      {UNITS.map(({ key, label }) => (
-        <div
-          key={label}
-          className="bg-white/60 dark:bg-warm-100/40 backdrop-blur-sm border border-stone-200 dark:border-warm-200/40 rounded-lg px-4 py-3 min-w-[64px] text-center"
-        >
-          <p className="text-3xl sm:text-4xl text-stone-800" style={{ fontFamily: "var(--font-playfair)" }}>
-            {String(timeLeft[key]).padStart(2, "0")}
-          </p>
-          <p className="text-xs uppercase tracking-widest text-stone-500 mt-1">{label}</p>
-        </div>
-      ))}
+    <div>
+      <div
+        className="text-xl sm:text-[22px] italic text-[var(--brass)] mb-5"
+        style={{ fontFamily: "var(--font-display)" }}
+      >
+        counting down to the day
+      </div>
+      <div className="flex justify-center items-start gap-3 sm:gap-7">
+        <Unit value={t ? pad(t.days) : "--"} label="Days" />
+        <Colon />
+        <Unit value={t ? pad(t.hours) : "--"} label="Hours" />
+        <Colon />
+        <Unit value={t ? pad(t.minutes) : "--"} label="Minutes" />
+        <Colon />
+        <Unit value={t ? pad(t.seconds) : "--"} label="Seconds" />
+      </div>
     </div>
   );
 }

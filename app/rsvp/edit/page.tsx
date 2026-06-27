@@ -40,7 +40,7 @@ export default async function RsvpEditPage() {
           </div>
           <h1
             className="text-4xl text-warm-800 mb-2"
-            style={{ fontFamily: "var(--font-playfair)" }}
+            style={{ fontFamily: "var(--font-display)" }}
           >
             Edit Your RSVP
           </h1>

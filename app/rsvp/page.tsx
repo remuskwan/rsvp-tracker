@@ -47,7 +47,7 @@ export default async function RsvpPage() {
           </div>
           <h1
             className="text-4xl text-warm-800 mb-2"
-            style={{ fontFamily: "var(--font-playfair)" }}
+            style={{ fontFamily: "var(--font-display)" }}
           >
             RSVP
           </h1>

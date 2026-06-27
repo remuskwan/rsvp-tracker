@@ -38,12 +38,10 @@ interface SelectedPin {
 }
 
 interface VenueMapProps {
-  lat: number;
-  lng: number;
-  venueName: string;
-  venueAddress?: string | null;
-  venuePhotoUrl?: string | null;
-  mapsUrl?: string | null;
+  /** Optional centering anchor (e.g. the venue area) used only when there are no pins. */
+  lat?: number | null;
+  lng?: number | null;
+  /** The markers shown on the map. The map is driven entirely by these. */
   mapPins?: MapPinData[];
 }
 
@@ -58,7 +56,7 @@ function PinMarker({ color, number, onClick }: { color: string; number: number; 
   );
 }
 
-export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, mapsUrl, mapPins = [] }: VenueMapProps) {
+export function VenueMap({ lat, lng, mapPins = [] }: VenueMapProps) {
   const [selected, setSelected] = useState<SelectedPin | null>(null);
   const [open, setOpen] = useState(false);
   const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? "";
@@ -72,13 +70,35 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
     setOpen(true);
   };
 
-  const allPins: SelectedPin[] = useMemo(() => [
-    { label: venueName, address: venueAddress, photo_url: venuePhotoUrl, lat, lng, type: "venue" as PinType, number: 1 },
-    ...mapPins.map((p, i) => ({ ...p, address: p.description ?? null, number: i + 2 })),
-  ], [lat, lng, venueName, venueAddress, venuePhotoUrl, mapPins]);
+  const allPins: SelectedPin[] = useMemo(
+    () => mapPins.map((p, i) => ({ ...p, address: p.description ?? null, number: i + 1 })),
+    [mapPins]
+  );
+
+  // Anchor the map on the pins themselves; fall back to the venue coordinates
+  // (when supplied) only while there are no pins to show.
+  const center = useMemo(() => {
+    if (allPins.length > 0) {
+      const lngs = allPins.map((p) => p.lng);
+      const lats = allPins.map((p) => p.lat);
+      return {
+        lng: (Math.min(...lngs) + Math.max(...lngs)) / 2,
+        lat: (Math.min(...lats) + Math.max(...lats)) / 2,
+      };
+    }
+    if (lat != null && lng != null) return { lng, lat };
+    return null;
+  }, [allPins, lat, lng]);
 
   const initialViewState = useMemo(() => {
-    if (allPins.length <= 1) return { longitude: lng, latitude: lat, zoom: 15 };
+    if (allPins.length === 0) {
+      return center
+        ? { longitude: center.lng, latitude: center.lat, zoom: 15 }
+        : undefined;
+    }
+    if (allPins.length === 1) {
+      return { longitude: allPins[0].lng, latitude: allPins[0].lat, zoom: 15 };
+    }
     const lngs = allPins.map((p) => p.lng);
     const lats = allPins.map((p) => p.lat);
     return {
@@ -88,40 +108,32 @@ export function VenueMap({ lat, lng, venueName, venueAddress, venuePhotoUrl, map
       ] as [[number, number], [number, number]],
       fitBoundsOptions: { padding: 60 },
     };
-  }, [allPins, lat, lng]);
+  }, [allPins, center]);
 
-  // Keep the viewport within ~10km of the venue so users can't pan away to the world.
-  const maxBounds = useMemo<[[number, number], [number, number]]>(() => {
+  // Keep the viewport within ~10km of the map's anchor so users can't pan away to the world.
+  const maxBounds = useMemo<[[number, number], [number, number]] | undefined>(() => {
+    if (!center) return undefined;
     const radiusKm = 10;
     const latDelta = radiusKm / 111.32;
-    const lngDelta = radiusKm / (111.32 * Math.cos((lat * Math.PI) / 180));
+    const lngDelta = radiusKm / (111.32 * Math.cos((center.lat * Math.PI) / 180));
     return [
-      [lng - lngDelta, lat - latDelta],
-      [lng + lngDelta, lat + latDelta],
+      [center.lng - lngDelta, center.lat - latDelta],
+      [center.lng + lngDelta, center.lat + latDelta],
     ];
-  }, [lat, lng]);
+  }, [center]);
 
-  // For the venue, prefer the address as the destination so Google routes to the
-  // building entrance (more accurate for large venues than the centroid lat/lng).
-  // Other pins keep lat/lng since their `address` field is freeform description.
   const directionsUrl = selected
-    ? `https://www.google.com/maps/dir/?api=1&destination=${
-        selected.type === "venue" && selected.address
-          ? encodeURIComponent(selected.address)
-          : `${selected.lat},${selected.lng}`
-      }`
+    ? `https://www.google.com/maps/dir/?api=1&destination=${selected.lat},${selected.lng}`
     : "";
   // Prefer an admin-supplied Google Maps URL so the link opens the real place
   // page (name, photos, reviews) instead of dropping a generic pin at lat/lng.
-  // Per-pin URL (any pin) wins; the venue pin falls back to wedding_info.maps_url;
-  // otherwise we land on a lat/lng search.
   const viewOnMapsUrl = selected
     ? selected.maps_url
       ? selected.maps_url
-      : selected.type === "venue" && mapsUrl
-        ? mapsUrl
-        : `https://www.google.com/maps/search/?api=1&query=${selected.lat},${selected.lng}`
+      : `https://www.google.com/maps/search/?api=1&query=${selected.lat},${selected.lng}`
     : "";
+
+  if (!center) return null;
 
   return (
     <div className="rounded-xl overflow-hidden border border-warm-200 shadow-sm">
