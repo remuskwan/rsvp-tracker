@@ -9,7 +9,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { updateWeddingInfo } from "@/app/actions/admin";
 import { GripVertical, PlusCircle, Trash2 } from "lucide-react";
-import { PinLocationSearch } from "@/components/pin-location-search";
 import { PinImageUpload } from "@/components/pin-image-upload";
 import {
   Select,
@@ -517,7 +516,7 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
         <Separator />
         <p className="text-sm text-stone-500">
           Add pins to the interactive map — venue entrance, pickup/drop-off points, MRT stations, etc.
-          Search by name or address to place each pin.
+          Enter the latitude and longitude to place each pin (right-click a spot in Google Maps to copy its coordinates).
         </p>
         <div className="space-y-4">
           {mapPins.map((pin, i) => (
@@ -571,20 +570,29 @@ export function WeddingInfoForm({ initial }: { initial: WeddingInfoData }) {
                   </Select>
                 </div>
               </div>
-              <div className="space-y-1">
-                <Label>Location</Label>
-                <PinLocationSearch
-                  address={pin.address}
-                  onSelect={(lat, lng, suggestedLabel, address) => {
-                    setMapPins((prev) =>
-                      prev.map((p, idx) =>
-                        idx === i
-                          ? { ...p, lat, lng, address, label: p.label || suggestedLabel }
-                          : p
-                      )
-                    );
-                  }}
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label>Latitude</Label>
+                  <Input
+                    type="number"
+                    step="any"
+                    inputMode="decimal"
+                    value={pin.lat}
+                    onChange={(e) => updatePin(i, "lat", e.target.value)}
+                    placeholder="1.2834"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label>Longitude</Label>
+                  <Input
+                    type="number"
+                    step="any"
+                    inputMode="decimal"
+                    value={pin.lng}
+                    onChange={(e) => updatePin(i, "lng", e.target.value)}
+                    placeholder="103.8607"
+                  />
+                </div>
               </div>
               <div className="space-y-1">
                 <Label>Description <span className="text-stone-400 font-normal">(optional)</span></Label>
