@@ -239,14 +239,19 @@ export default async function Home() {
         {wedding?.venue_name && (
           <section id="venue">
             <div className="grid md:grid-cols-2 items-stretch">
-              <div className="overflow-hidden min-h-[280px] md:min-h-[440px] relative">
-                <Image
-                  src={wedding.venue_photo_url || "/rsvp.jpeg"}
-                  alt={wedding.venue_name}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 490px"
-                  className="object-cover"
-                />
+              <div className="flex items-center justify-center overflow-hidden bg-warm-100">
+                {/* Fixed aspect ratio keeps the photo at native resolution and
+                    lets object-cover crop it, rather than stretching it to match
+                    the (often taller) text column beside it. */}
+                <div className="relative w-full aspect-[3/2]">
+                  <Image
+                    src={wedding.venue_photo_url || "/rsvp.jpeg"}
+                    alt={wedding.venue_name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 490px"
+                    className="object-cover"
+                  />
+                </div>
               </div>
               <div className="px-8 sm:px-14 py-12 sm:py-[60px]">
                 <div className="text-[13px] tracking-[0.3em] uppercase text-[var(--brass)]">
