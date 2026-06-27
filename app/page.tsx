@@ -77,7 +77,7 @@ export default async function Home() {
 
   // Split "Remus & Xiaowen" into two stacked names where possible.
   const names = (wedding?.couple_names ?? "The Happy Couple").split(
-    /\s*(?:&|and)\s*/i
+    /\s*(?:&|and)\s*/i,
   );
   const [firstName, secondName] =
     names.length === 2 ? names : [names.join(" "), null];
@@ -147,7 +147,7 @@ export default async function Home() {
           >
             From thundering waterfalls to quiet gardens,
             <br />
-            our greatest adventure begins with &lsquo;I do&rsquo;.
+            our greatest adventure begins. Join us as we say &lsquo;I do&rsquo;.
           </p>
           {wedding?.event_date && (
             <p className="text-sm sm:text-base tracking-[0.22em] uppercase mt-5 text-warm-500">
@@ -207,7 +207,9 @@ export default async function Home() {
             <div className="max-w-[540px] mx-auto grid grid-cols-[80px_1fr] sm:grid-cols-[120px_1fr] gap-x-6 sm:gap-x-7">
               {scheduleRows.map((row, i) => {
                 const border =
-                  i === scheduleRows.length - 1 ? "" : "border-b border-[#d6d2bf]";
+                  i === scheduleRows.length - 1
+                    ? ""
+                    : "border-b border-[#d6d2bf]";
                 return (
                   <div key={i} className="contents">
                     <div
@@ -221,7 +223,9 @@ export default async function Home() {
                         {row.title}
                       </div>
                       {row.detail && (
-                        <div className="text-warm-500 text-[15px]">{row.detail}</div>
+                        <div className="text-warm-500 text-[15px]">
+                          {row.detail}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -263,11 +267,14 @@ export default async function Home() {
                 {wedding.how_to_get_there ? (
                   <HowToGetThereText
                     text={wedding.how_to_get_there}
-                    pins={(wedding.map_pins ?? []).map((p, i) => ({
-                      label: p.label,
-                      type: p.type,
-                      number: i + 1,
-                    } satisfies PinRef))}
+                    pins={(wedding.map_pins ?? []).map(
+                      (p, i) =>
+                        ({
+                          label: p.label,
+                          type: p.type,
+                          number: i + 1,
+                        }) satisfies PinRef,
+                    )}
                   />
                 ) : (
                   <p className="text-base text-warm-700 m-0">
