@@ -63,9 +63,6 @@ export function VenueMap({ lat, lng, mapPins = [] }: VenueMapProps) {
   const mapRef = useRef<MapRef>(null);
   const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? "";
 
-  const centerToVenue = () => {
-    mapRef.current?.flyTo({ center: [lng, lat], zoom: 15, duration: 900 });
-  };
   const { resolvedTheme } = useTheme();
   const mapStyle = resolvedTheme === "dark"
     ? "mapbox://styles/mapbox/dark-v11"
@@ -95,6 +92,11 @@ export function VenueMap({ lat, lng, mapPins = [] }: VenueMapProps) {
     if (lat != null && lng != null) return { lng, lat };
     return null;
   }, [allPins, lat, lng]);
+
+  const centerToVenue = () => {
+    if (!center) return;
+    mapRef.current?.flyTo({ center: [center.lng, center.lat], zoom: 15, duration: 900 });
+  };
 
   const initialViewState = useMemo(() => {
     if (allPins.length === 0) {
