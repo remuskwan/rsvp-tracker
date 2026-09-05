@@ -32,6 +32,7 @@ import {
   AlertDialogClose,
 } from "@/components/ui/alert-dialog";
 import { deleteRsvp, updateRsvpStatus } from "@/app/actions/admin";
+import { AddRsvpDialog } from "@/components/add-rsvp-dialog";
 import {
   Mail,
   Phone,
@@ -52,7 +53,7 @@ interface Rsvp {
   id: string;
   created_at: string;
   submitter_name: string;
-  email: string;
+  email: string | null;
   phone?: string | null;
   attending: boolean;
   party_size: number;
@@ -61,6 +62,7 @@ interface Rsvp {
   message?: string | null;
   followup_status: string;
   admin_notes?: string | null;
+  source?: string;
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -132,18 +134,25 @@ function RsvpRow({ rsvp }: { rsvp: Rsvp }) {
               <ChevronDown className="h-4 w-4 text-stone-400" />
             )}
             <span className="font-medium">{rsvp.submitter_name}</span>
+            {rsvp.source === "admin" && (
+              <Badge variant="secondary" className="ml-1 text-[10px] uppercase tracking-wide">
+                Manual
+              </Badge>
+            )}
           </button>
         </TableCell>
         <TableCell>
           <div className="flex items-center gap-2">
-            <a
-              href={`mailto:${rsvp.email}`}
-              className="text-sm text-blue-600 hover:underline flex items-center gap-1"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Mail className="h-3 w-3" />
-              {rsvp.email}
-            </a>
+            {rsvp.email && (
+              <a
+                href={`mailto:${rsvp.email}`}
+                className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Mail className="h-3 w-3" />
+                {rsvp.email}
+              </a>
+            )}
           </div>
           {rsvp.phone && (
             <a
@@ -213,8 +222,9 @@ function RsvpRow({ rsvp }: { rsvp: Rsvp }) {
                   This permanently removes the RSVP from{" "}
                   <strong className="text-stone-700">
                     {rsvp.submitter_name}
-                  </strong>{" "}
-                  ({rsvp.email}) and all guest details. This cannot be undone.
+                  </strong>
+                  {rsvp.email ? ` (${rsvp.email})` : ""} and all guest details. This
+                  cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -273,7 +283,7 @@ function RsvpRow({ rsvp }: { rsvp: Rsvp }) {
                   <p className="text-xs font-medium text-stone-500 uppercase tracking-wide mb-2">
                     Message
                   </p>
-                  <p className="text-sm text-stone-700 italic">&ldquo;{rsvp.message}&rdquo;</p>
+                  <p className="text-sm text-stone-700 italic break-words whitespace-pre-wrap">&ldquo;{rsvp.message}&rdquo;</p>
                 </div>
               )}
 
@@ -357,7 +367,7 @@ export function RsvpsTable({ rsvps }: { rsvps: Rsvp[] }) {
     const matchesSearch =
       !search ||
       r.submitter_name.toLowerCase().includes(search.toLowerCase()) ||
-      r.email.toLowerCase().includes(search.toLowerCase());
+      (r.email?.toLowerCase().includes(search.toLowerCase()) ?? false);
 
     const matchesAttending =
       filterAttending === "all" ||
@@ -432,6 +442,7 @@ export function RsvpsTable({ rsvps }: { rsvps: Rsvp[] }) {
             ))}
           </SelectContent>
         </Select>
+        <AddRsvpDialog />
         <a href="/api/rsvps/export">
           <Button variant="outline" size="sm" className="gap-2">
             <Download className="h-4 w-4" />

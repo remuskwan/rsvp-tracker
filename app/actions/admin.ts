@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/supabase/admin-guard";
-import { weddingInfoSchema } from "@/lib/validation";
+import { weddingInfoSchema, adminRsvpSchema } from "@/lib/validation";
 import { revalidatePath } from "next/cache";
 
 async function geocodeAddress(address: string): Promise<{ lat: number; lng: number } | null> {
@@ -137,6 +137,48 @@ export async function deleteRsvp(id: string) {
   if (error) {
     console.error("RSVP delete error:", error);
     return { success: false, error: "Failed to delete." };
+  }
+
+  revalidatePath("/admin/dashboard");
+  return { success: true };
+}
+
+export async function createManualRsvp(rawData: unknown) {
+  await requireAdmin();
+
+  const parsed = adminRsvpSchema.safeParse(rawData);
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: parsed.error.issues.map((e) => e.message).join(", "),
+    };
+  }
+
+  const data = parsed.data;
+  const attendingGuests = data.guests.filter((g) => g.attending);
+  const partySize = attendingGuests.length;
+  const attending = partySize > 0;
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("rsvps").insert({
+    submitter_name: data.submitter_name,
+    email: data.email ?? null,
+    phone: data.phone || null,
+    attending,
+    party_size: partySize,
+    guests: data.guests,
+    side: data.side ?? null,
+    message: data.message || null,
+    followup_status: data.followup_status,
+    source: "admin",
+  });
+
+  if (error) {
+    if (error.code === "23505") {
+      return { success: false, error: "An RSVP with that email already exists." };
+    }
+    console.error("Manual RSVP insert error:", error);
+    return { success: false, error: "Failed to add RSVP. Please try again." };
   }
 
   revalidatePath("/admin/dashboard");

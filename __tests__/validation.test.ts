@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { guestSchema, rsvpSchema, weddingInfoSchema } from '../lib/validation'
+import { guestSchema, rsvpSchema, weddingInfoSchema, adminRsvpSchema } from '../lib/validation'
 
 describe('guestSchema', () => {
   it('accepts a valid guest with all fields', () => {
@@ -100,5 +100,56 @@ describe('weddingInfoSchema', () => {
     expect(
       weddingInfoSchema.safeParse({ couple_names: 'Alice & Bob', map_pins: [pin] }).success
     ).toBe(false)
+  })
+})
+
+describe('adminRsvpSchema', () => {
+  const base = {
+    submitter_name: 'Alice',
+    guests: [{ name: 'Alice', attending: true }],
+  }
+
+  it('accepts an entry with no email', () => {
+    const result = adminRsvpSchema.safeParse(base)
+    expect(result.success).toBe(true)
+    if (result.success) expect(result.data.email).toBeUndefined()
+  })
+
+  it('treats a blank email as undefined', () => {
+    const result = adminRsvpSchema.safeParse({ ...base, email: '   ' })
+    expect(result.success).toBe(true)
+    if (result.success) expect(result.data.email).toBeUndefined()
+  })
+
+  it('lowercases and trims a provided email', () => {
+    const result = adminRsvpSchema.safeParse({ ...base, email: '  ALICE@EXAMPLE.COM ' })
+    expect(result.success).toBe(true)
+    if (result.success) expect(result.data.email).toBe('alice@example.com')
+  })
+
+  it('rejects a malformed non-empty email', () => {
+    expect(adminRsvpSchema.safeParse({ ...base, email: 'not-an-email' }).success).toBe(false)
+  })
+
+  it('requires at least one guest', () => {
+    expect(adminRsvpSchema.safeParse({ ...base, guests: [] }).success).toBe(false)
+  })
+
+  it('requires a submitter_name', () => {
+    expect(adminRsvpSchema.safeParse({ ...base, submitter_name: '' }).success).toBe(false)
+  })
+
+  it('defaults followup_status to confirmed', () => {
+    const result = adminRsvpSchema.safeParse(base)
+    if (result.success) expect(result.data.followup_status).toBe('confirmed')
+  })
+
+  it('accepts an explicit followup_status', () => {
+    const result = adminRsvpSchema.safeParse({ ...base, followup_status: 'new' })
+    if (result.success) expect(result.data.followup_status).toBe('new')
+  })
+
+  it('rejects an unknown followup_status', () => {
+    expect(adminRsvpSchema.safeParse({ ...base, followup_status: 'maybe' }).success).toBe(false)
   })
 })

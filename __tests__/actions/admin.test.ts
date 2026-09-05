@@ -18,7 +18,7 @@ vi.mock('next/cache', () => ({
 }))
 
 import { revalidatePath } from 'next/cache'
-import { addAdmin, removeAdmin, updateRsvpStatus, deleteRsvp, updateWeddingInfo } from '../../app/actions/admin'
+import { addAdmin, removeAdmin, updateRsvpStatus, deleteRsvp, updateWeddingInfo, createManualRsvp } from '../../app/actions/admin'
 
 function makeChain({ error = null }: { error?: unknown } = {}) {
   const chain: Record<string, unknown> = {}
@@ -182,5 +182,72 @@ describe('updateWeddingInfo', () => {
     makeChain()
     const result = await updateWeddingInfo({ ...validWeddingInfo, venue_address: '123 Main St' })
     expect(result).toEqual({ success: true })
+  })
+})
+
+describe('createManualRsvp', () => {
+  const validEntry = {
+    submitter_name: 'Carol',
+    guests: [
+      { name: 'Carol', attending: true },
+      { name: 'Dave', attending: true },
+    ],
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockRequireAdmin.mockResolvedValue({ email: 'admin@example.com' })
+  })
+
+  it('propagates auth rejection when requireAdmin throws', async () => {
+    mockRequireAdmin.mockRejectedValueOnce(new Error('NEXT_REDIRECT:/admin/login'))
+    await expect(createManualRsvp(validEntry)).rejects.toThrow('NEXT_REDIRECT')
+  })
+
+  it('returns a validation error for invalid data', async () => {
+    const result = await createManualRsvp({ submitter_name: '', guests: [] })
+    expect(result.success).toBe(false)
+  })
+
+  it('inserts with source admin and derived party size, then revalidates', async () => {
+    const chain = makeChain()
+    const result = await createManualRsvp(validEntry)
+    expect(result).toEqual({ success: true })
+    expect(chain.insert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        source: 'admin',
+        attending: true,
+        party_size: 2,
+        email: null,
+        followup_status: 'confirmed',
+      }),
+    )
+    expect(vi.mocked(revalidatePath)).toHaveBeenCalledWith('/admin/dashboard')
+  })
+
+  it('records a regrets entry as not attending with party size 0', async () => {
+    const chain = makeChain()
+    await createManualRsvp({
+      submitter_name: 'Eve',
+      guests: [{ name: 'Eve', attending: false }],
+    })
+    expect(chain.insert).toHaveBeenCalledWith(
+      expect.objectContaining({ attending: false, party_size: 0 }),
+    )
+  })
+
+  it('maps a duplicate email (23505) to a friendly error', async () => {
+    makeChain({ error: { code: '23505' } })
+    const result = await createManualRsvp({ ...validEntry, email: 'dup@example.com' })
+    expect(result).toEqual({
+      success: false,
+      error: 'An RSVP with that email already exists.',
+    })
+  })
+
+  it('returns a generic error for other database failures', async () => {
+    makeChain({ error: { code: 'XXXXX', message: 'boom' } })
+    const result = await createManualRsvp(validEntry)
+    expect(result).toEqual({ success: false, error: 'Failed to add RSVP. Please try again.' })
   })
 })
