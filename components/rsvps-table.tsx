@@ -283,7 +283,7 @@ function RsvpRow({ rsvp }: { rsvp: Rsvp }) {
                   <p className="text-xs font-medium text-stone-500 uppercase tracking-wide mb-2">
                     Message
                   </p>
-                  <p className="text-sm text-stone-700 italic">&ldquo;{rsvp.message}&rdquo;</p>
+                  <p className="text-sm text-stone-700 italic break-words whitespace-pre-wrap">&ldquo;{rsvp.message}&rdquo;</p>
                 </div>
               )}
 
