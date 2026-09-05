@@ -32,6 +32,7 @@ import {
   AlertDialogClose,
 } from "@/components/ui/alert-dialog";
 import { deleteRsvp, updateRsvpStatus } from "@/app/actions/admin";
+import { AddRsvpDialog } from "@/components/add-rsvp-dialog";
 import {
   Mail,
   Phone,
@@ -61,6 +62,7 @@ interface Rsvp {
   message?: string | null;
   followup_status: string;
   admin_notes?: string | null;
+  source?: string;
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -132,6 +134,11 @@ function RsvpRow({ rsvp }: { rsvp: Rsvp }) {
               <ChevronDown className="h-4 w-4 text-stone-400" />
             )}
             <span className="font-medium">{rsvp.submitter_name}</span>
+            {rsvp.source === "admin" && (
+              <Badge variant="secondary" className="ml-1 text-[10px] uppercase tracking-wide">
+                Manual
+              </Badge>
+            )}
           </button>
         </TableCell>
         <TableCell>
@@ -432,6 +439,7 @@ export function RsvpsTable({ rsvps }: { rsvps: Rsvp[] }) {
             ))}
           </SelectContent>
         </Select>
+        <AddRsvpDialog />
         <a href="/api/rsvps/export">
           <Button variant="outline" size="sm" className="gap-2">
             <Download className="h-4 w-4" />
