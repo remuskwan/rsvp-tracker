@@ -65,3 +65,26 @@ export const weddingInfoSchema = z.object({
 })
 
 export type WeddingInfoFormData = z.infer<typeof weddingInfoSchema>
+
+export const adminRsvpSchema = z.object({
+  submitter_name: z.string().min(1, 'Name is required'),
+  email: z
+    .preprocess(
+      (v) => (typeof v === 'string' ? v.trim().toLowerCase() : v),
+      z.union([
+        z.literal(''),
+        z.string().email('Enter a valid email or leave it blank'),
+      ]),
+    )
+    .transform((v) => (v === '' ? undefined : v))
+    .optional(),
+  phone: z.string().optional().default(''),
+  guests: z.array(guestSchema).min(1, 'Add at least one guest'),
+  side: z.enum(['bride', 'groom', 'both']).optional(),
+  message: z.string().optional().default(''),
+  followup_status: z
+    .enum(['new', 'contacted', 'confirmed', 'no_response'])
+    .default('confirmed'),
+})
+
+export type AdminRsvpFormData = z.infer<typeof adminRsvpSchema>
