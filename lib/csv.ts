@@ -8,7 +8,7 @@ interface RsvpRow {
   id: string
   created_at: string
   submitter_name: string
-  email: string
+  email: string | null
   phone?: string | null
   attending: boolean
   party_size: number

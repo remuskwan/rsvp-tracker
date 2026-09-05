@@ -53,7 +53,7 @@ interface Rsvp {
   id: string;
   created_at: string;
   submitter_name: string;
-  email: string;
+  email: string | null;
   phone?: string | null;
   attending: boolean;
   party_size: number;
@@ -143,14 +143,16 @@ function RsvpRow({ rsvp }: { rsvp: Rsvp }) {
         </TableCell>
         <TableCell>
           <div className="flex items-center gap-2">
-            <a
-              href={`mailto:${rsvp.email}`}
-              className="text-sm text-blue-600 hover:underline flex items-center gap-1"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Mail className="h-3 w-3" />
-              {rsvp.email}
-            </a>
+            {rsvp.email && (
+              <a
+                href={`mailto:${rsvp.email}`}
+                className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Mail className="h-3 w-3" />
+                {rsvp.email}
+              </a>
+            )}
           </div>
           {rsvp.phone && (
             <a
@@ -364,7 +366,7 @@ export function RsvpsTable({ rsvps }: { rsvps: Rsvp[] }) {
     const matchesSearch =
       !search ||
       r.submitter_name.toLowerCase().includes(search.toLowerCase()) ||
-      r.email.toLowerCase().includes(search.toLowerCase());
+      (r.email?.toLowerCase().includes(search.toLowerCase()) ?? false);
 
     const matchesAttending =
       filterAttending === "all" ||
