@@ -222,8 +222,9 @@ function RsvpRow({ rsvp }: { rsvp: Rsvp }) {
                   This permanently removes the RSVP from{" "}
                   <strong className="text-stone-700">
                     {rsvp.submitter_name}
-                  </strong>{" "}
-                  ({rsvp.email}) and all guest details. This cannot be undone.
+                  </strong>
+                  {rsvp.email ? ` (${rsvp.email})` : ""} and all guest details. This
+                  cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
